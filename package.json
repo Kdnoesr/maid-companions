@@ -1,5 +1,5 @@
 {
-  "name": "@dsh-external/maid-companions",
+  "name": "@kdnoesr/maid-companions",
   "version": "0.2.11",
   "description": "左右鲸鱼娘女仆立绘 + 对话区/浮层液态玻璃质感（原始 UI 也显示，通用设置开关控制）。2026-10-09 适配 DSH Desktop 0.2（客户端哈希类名按 0.2 实测重映射）。2026-10-16 功能页分层与半透明：借 display:contents 槽宿主把页根抬到立绘之上；页内 bg-base 透明、bg-layer-1/2/3 降 alpha（同 maid-atelier 机制）；轨迹/对话 viewArea 三档 alpha 收在 34/40/46%。技能中心因整页只有 bg-base（无 layer 卡片兜底）、文字直压立绘，单独按 42% 铺一层 input-major 底色，其余面板不动。",
   "type": "module",
@@ -52,10 +52,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/YOUR-NAME/maid-companions.git"
+    "url": "git+https://github.com/kdnoesr/maid-companions.git"
   },
   "bugs": {
-    "url": "https://github.com/YOUR-NAME/maid-companions/issues"
+    "url": "https://github.com/kdnoesr/maid-companions/issues"
   },
-  "homepage": "https://github.com/YOUR-NAME/maid-companions#readme"
+  "homepage": "https://github.com/kdnoesr/maid-companions#readme"
 }

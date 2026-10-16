@@ -17,13 +17,13 @@
 在 DSH 侧栏「插件」→「添加插件」里填入包名：
 
 ```text
-@YOUR-SCOPE/maid-companions
+@kdnoesr/maid-companions
 ```
 
 或命令行：
 
 ```bash
-dsh plugin --profile desktop add '@YOUR-SCOPE/maid-companions'
+dsh plugin --profile desktop add '@kdnoesr/maid-companions'
 ```
 
 ### 方式二：从 GitHub 安装
@@ -31,13 +31,13 @@ dsh plugin --profile desktop add '@YOUR-SCOPE/maid-companions'
 在同一个「添加插件」框里填入（只填地址，不加 `dsh plugin add`）：
 
 ```text
-github:YOUR-NAME/maid-companions#main
+github:kdnoesr/maid-companions#main
 ```
 
 ### 方式三：本地开发
 
 ```bash
-git clone https://github.com/YOUR-NAME/maid-companions.git
+git clone https://github.com/kdnoesr/maid-companions.git
 dsh plugin --profile desktop add link:/path/to/maid-companions
 ```
 

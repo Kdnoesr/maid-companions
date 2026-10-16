@@ -4,4 +4,4 @@
 # profile loader requires every listed bundle to declare dsh.bundle.)
 - insert:
     - id: maid-companions
-      name: '@dsh-external/maid-companions'
+      name: '@kdnoesr/maid-companions'

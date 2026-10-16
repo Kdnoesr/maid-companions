@@ -1,5 +1,5 @@
 /**
- * @dsh-external/maid-companions — 守护循环形态（由 dev_scaffold_plugin 生成）。
+ * @kdnoesr/maid-companions — 守护循环形态（由 dev_scaffold_plugin 生成）。
  * 小 agent loop：timer 驱动自主循环 → 观察 → LLM 决策 → 行动 → 再睡。
  * 插件自身的提示词/循环参数皆可自我优化（改 → build → dev_reload_package）。
  */
@@ -16,7 +16,7 @@ type AppContext = Context & {
   setInterval(fn: () => void, ms: number): any
 }
 
-export const name = "@dsh-external/maid-companions"
+export const name = "@kdnoesr/maid-companions"
 export const inject = ['timer', 'llm']
 
 export interface Config {
@@ -98,5 +98,5 @@ export function apply(ctx: AppContext, config: Config): void {
     })().catch((e) => log('loop error: ' + String(e)))
   }, config.intervalMs)
 
-  ctx.logger?.info?.('[' + "@dsh-external/maid-companions" + '] 守护循环启动（每 ' + config.intervalMs + 'ms 一轮）')
+  ctx.logger?.info?.('[' + "@kdnoesr/maid-companions" + '] 守护循环启动（每 ' + config.intervalMs + 'ms 一轮）')
 }
