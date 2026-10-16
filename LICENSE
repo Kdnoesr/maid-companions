@@ -1,0 +1,66 @@
+# Licensing scope
+
+本插件（maid-companions）**代码**与**美术资源**适用不同许可，请分别遵守。
+
+## 1. 代码：BSD-3-Clause
+
+除美术资源外的全部内容 —— 包括 `lib/` 中的 JavaScript 与 CSS、`src/`、
+`cordis.patch.yml`、`scripts/`、`docs/`、构建配置 —— 采用 BSD-3-Clause。
+正文见本文件末尾。
+
+## 2. 美术资源：CC BY-NC-SA 4.0（非 MIT / 非 BSD）
+
+随包分发的全部鲸鱼娘女仆立绘（以内嵌 data URL 形式存放在 `lib/client.js`
+中）来自上游仓库 dsh-deep-whale 的 maid-atelier 皮肤，适用
+**CC BY-NC-SA 4.0**：署名（Attribution）、**非商业性使用（NonCommercial）**、
+相同方式共享（ShareAlike）。
+
+美术许可正文见 [LICENSE-ARTWORK](LICENSE-ARTWORK)，
+完整署名链与复用要求见 [NOTICE](NOTICE)。
+
+> ⚠️ 即使美术资源被内嵌进源码、CSS、data URL 或 `lib/`，其许可**不改变**。
+> 引用上游原文：
+> “Bundling artwork into source code, CSS, data URLs, or lib/ does not
+> change its license.”
+
+**不得将本插件的立绘用于任何商业用途。**
+
+## 3. 署名链（必须完整保留）
+
+1. **上善** —— 鲸鱼娘角色形象原作者
+   · [Pixiv](https://www.pixiv.net/users/62155430) · [Bilibili](https://b23.tv/8h5L4xz)
+2. **ZipZipPipe** —— 加入 DeepSeek 元素的女仆鲸鱼娘二次设计
+   · [Pixiv](https://www.pixiv.net/users/18604994) · [Bilibili](https://b23.tv/Pnw6nG8)
+3. **Small-tailqwq** —— [dsh-deep-whale](https://github.com/Small-tailqwq/dsh-deep-whale) / maid-atelier 皮肤
+
+---
+
+## BSD 3-Clause License
+
+Copyright (c) 2026, maid-companions contributors
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+3. Neither the name of the copyright holder nor the names of its
+   contributors may be used to endorse or promote products derived from
+   this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.

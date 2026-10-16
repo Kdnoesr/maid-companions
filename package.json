@@ -1,0 +1,61 @@
+{
+  "name": "@dsh-external/maid-companions",
+  "version": "0.2.11",
+  "description": "左右鲸鱼娘女仆立绘 + 对话区/浮层液态玻璃质感（原始 UI 也显示，通用设置开关控制）。2026-10-09 适配 DSH Desktop 0.2（客户端哈希类名按 0.2 实测重映射）。2026-10-16 功能页分层与半透明：借 display:contents 槽宿主把页根抬到立绘之上；页内 bg-base 透明、bg-layer-1/2/3 降 alpha（同 maid-atelier 机制）；轨迹/对话 viewArea 三档 alpha 收在 34/40/46%。技能中心因整页只有 bg-base（无 layer 卡片兜底）、文字直压立绘，单独按 42% 铺一层 input-major 底色，其余面板不动。",
+  "type": "module",
+  "main": "./lib/index.js",
+  "license": "BSD-3-Clause",
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "maid",
+    "companion",
+    "liquid-glass",
+    "ui"
+  ],
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE",
+    "LICENSE-ARTWORK",
+    "NOTICE"
+  ],
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "engines": {
+      "dsh": ">=0.2.0-rc.2"
+    },
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime",
+        "@deepseek-ai/dsh-client-ui-slots"
+      ],
+      "platform": "web"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/dsh-client-runtime": ">=0.2.0-rc.2",
+    "@deepseek-ai/dsh-client-ui-slots": ">=0.2.0-rc.2"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/dsh-client-runtime": { "optional": true },
+    "@deepseek-ai/dsh-client-ui-slots": { "optional": true }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YOUR-NAME/maid-companions.git"
+  },
+  "bugs": {
+    "url": "https://github.com/YOUR-NAME/maid-companions/issues"
+  },
+  "homepage": "https://github.com/YOUR-NAME/maid-companions#readme"
+}

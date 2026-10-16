@@ -1,0 +1,26 @@
+# ═══ 重要：lib/ 必须入库 ═══
+# lib/client.js 是本插件**唯一的实现**（940KB，含立绘 base64）。
+# 这里曾经写着 lib/，会导致 clone 下来只有一个 1.3KB 的桩，插件完全跑不起来。
+# src/ 下是旧的桩代码，不要运行 scripts/build.sh（它会覆盖 lib/client.js）。
+# 详见 README「调参」一节。
+#
+# lib/
+
+node_modules/
+*.tsbuildinfo
+
+# 打包产物
+*.tgz
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# 本地备份与临时文件（不入库）
+backups/
+*.bak
+*.bak-*
+*.orig
+_tmp_*
