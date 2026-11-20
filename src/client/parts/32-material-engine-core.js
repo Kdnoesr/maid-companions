@@ -104,6 +104,22 @@
 			 *  这与当年 installRing 里"每根条子各配一套 filter"是同一个教训的
 			 *  两个不同层面：那次解决的是 feImage 的坐标系对齐，这次是 SDF 的
 			 *  参考盒子 —— 两个都不能错。 */
+			// Orthographic ray traced backwards, from air through a rounded entry to a flat exit.
+			// Depth and optical path lengths use the bezel width as their reference unit.
+			const traceGlass = (depth) => {
+				const ior = 1.5;
+				const incidence = (1 - depth) ** 2 * (Math.PI * 58 / 180);
+				const refracted = Math.asin(Math.sin(incidence) / ior);
+				const inside = incidence - refracted;
+				const exit = Math.asin(ior * Math.sin(inside));
+				const ci = Math.cos(incidence), ct = Math.cos(refracted);
+				const rs = (ci - ior * ct) / (ci + ior * ct);
+				const rp = (ior * ci - ct) / (ior * ci + ct);
+				return { shift: 0.75 * Math.tan(inside) + 0.35 * Math.tan(exit), reflectance: (rs * rs + rp * rp) / 2 };
+			};
+			const glassSamples = Array.from({ length: 129 }, (_, i) => traceGlass(i / 128));
+			const peakShift = glassSamples[0].shift;
+			const maxSlope = Math.max(...glassSamples.slice(1).map((value, i) => (glassSamples[i].shift - value.shift) * 128 / peakShift));
 			const mapCache = new Map();
 			const buildMap = (elW, elH, radius, bezel, area, kScale, ease, dTarget) => {
 				const key = JSON.stringify([elW, elH, radius, bezel, area, kScale, ease, dTarget || 0, LIQUID.strength, LIQUID.zoom]);
@@ -133,6 +149,8 @@
 				// kScale：环带专用放大系数（垫层已磨砂，边缘补一点强度才看得出弯折）。
 				// 输入框/菜单不传 → 恒为 1，行为与旧版逐字节一致。
 				const k = LIQUID.strength * (kScale || 1);
+				const optical = ease === "physical";
+				const reflections = optical ? new Uint8Array(w * h) : null;
 				let maxD = 0.0001;
 				for (let y = 0; y < h; y++) {
 					for (let x = 0; x < w; x++) {
@@ -160,7 +178,14 @@
 						//   一圈 4.7× 的凸包（"里面糊了一圈"），quad2 的极大值挪到物理外缘
 						//   u≈7（被 0.5px 高光边盖住）—— 带均值 0.81 / 带最小 0.67，
 						//   对现状 0.67 / 0.28。这就是"折射区与内部不再割裂"的数值依据。
-						if (ease === "convex-rim") {
+						let reflectance = 0;
+						if (optical) {
+							const index = clamp(-sd / sBezel, 0, 1) * 128;
+							const lo = Math.min(127, Math.floor(index)), mix = index - lo;
+							const a = glassSamples[lo], b = glassSamples[lo + 1];
+							m = (a.shift + (b.shift - a.shift) * mix) / peakShift;
+							reflectance = a.reflectance + (b.reflectance - a.reflectance) * mix - 0.04;
+						} else if (ease === "convex-rim") {
 							// Convex shoulder with zero slope at the clear center and a bounded edge slope.
 							const depth = clamp(-sd / sBezel, 0, 1);
 							const edge = 1 - depth;
@@ -205,6 +230,11 @@
 						const dy = ny * amp - py * LIQUID.zoom;
 						const i = (y * w + x) * 2;
 						raw[i] = dx; raw[i + 1] = dy;
+						if (reflections) {
+							// Fixed broad light from top left, with softer fill on the opposite edge.
+							const towardLight = clamp(nx * 0.6 + ny * 0.8, -1, 1);
+							reflections[i / 2] = Math.round(255 * clamp(2.6 * reflectance * (0.24 + 0.76 * Math.max(0, towardLight)), 0, 1));
+						}
 						const ad = Math.max(Math.abs(dx), Math.abs(dy));
 						if (ad > maxD) maxD = ad;
 					}
@@ -232,13 +262,15 @@
 				//   解码 scale=2·dTarget ⇒ d_peak = scale×0.5 = dTarget，任何尺寸恒等。
 				// Use the continuous peak for the convex rim to keep subpixel sampling
 				// and resizing from amplifying the profile at small dimensions.
-				const peak = ease === "convex-rim" ? k * sBezel : maxD;
+				const peak = optical || ease === "convex-rim" ? k * sBezel : maxD;
 				const enc = dTarget ? 2 * peak : maxD / dispScale;
-				const scale = dTarget ? 2 * dTarget : enc * 2, data = img.data;
+				// Keep sampling locally ordered even at the steepest part of the profile.
+				const target = optical ? Math.min(dTarget, 0.88 * bezel / maxSlope) : dTarget;
+				const scale = target ? 2 * target : enc * 2, data = img.data;
 				for (let i = 0, p = 0; i < raw.length; i += 2, p += 4) {
 					data[p] = clamp(raw[i] / enc + 0.5, 0, 1) * 255;       // R → X
 					data[p + 1] = clamp(raw[i + 1] / enc + 0.5, 0, 1) * 255; // G → Y
-					data[p + 2] = 128; data[p + 3] = 255;
+					data[p + 2] = reflections ? reflections[i / 2] : 128; data[p + 3] = 255;
 				}
 				ctx2d.putImageData(img, 0, 0);
 				const result = { url: cv.toDataURL(), scale };

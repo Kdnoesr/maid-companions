@@ -50,3 +50,22 @@ test('convex rim keeps encoded displacement bounded and preserves edge sample or
   }
 });
 const kNeutral = 128;
+
+test('physical glass bends inward and reflects more at the illuminated edge', () => {
+  const createMap = createMapFactory();
+  const width = 240, height = 152, bezel = 24;
+  const map = createMap(width, height, 20, bezel, null, 1, 'physical', 10);
+  const {w,h,data} = map.url;
+  const at = (y, channel) => data[(y*w + Math.floor(w/2))*4 + channel];
+  assert.ok(at(0, 1) > 200);
+  assert.ok(at(0, 2) > at(h-1, 2) + 8);
+  assert.equal(at(bezel + 1, 1), kNeutral);
+  assert.equal(at(bezel + 1, 2), 0);
+  assert.ok(map.scale > 0 && map.scale <= 20);
+  let previous = -Infinity;
+  for (let y = 0; y <= bezel; y++) {
+    const sample = y + map.scale * (at(y, 1)/255 - 0.5);
+    assert.ok(sample > previous, 'background sampling must not fold back');
+    previous = sample;
+  }
+});
