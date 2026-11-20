@@ -7,6 +7,7 @@
 
 		// 角色舞台样式（作用域限定在 body[data-dsh-maid-companions]，不影响正常 UI）。
 		// 舞台放在对话视图根内；z-index:5 使其在不透明背景之上可见。
+		const GLASS_ATTR = "data-dsh-maid-companion-glass";
 		const STAGE_CSS = `
 body[${OWNER_ATTR}] [data-dsh-maid-companion-stage] {
 	position: absolute;
@@ -151,7 +152,7 @@ body[${OWNER_ATTR}] ${ROOT_SELECTOR} > [data-slot] > * > * {
 /* 底部「渐变/作曲区」锁定条（composerSeat，z-index:7, sticky bottom:0）的不透明
    渐变背景会盖住立绘脚部。用户要求修改渐变区域：把它的背景改为透明，让
    z-index:0 的立绘脚部从渐变区透出（composer 输入卡片本身是子元素，不受影响）。 */
-body[${OWNER_ATTR}] [data-composer-seat] {
+body[${GLASS_ATTR}] [data-composer-seat] {
 	background: transparent !important;
 }
 
@@ -216,7 +217,7 @@ body[${OWNER_ATTR}] [data-composer-seat] {
    否则面板会从"浮在页面上"变成"贴在页面上"。这里用外投影 + 上高光 + 下描边
    重建"玻璃器皿"的厚度，不写回宿主 token 是刻意的 —— 宿主用的是 elevation
    系列，混进来会把内高光覆盖掉（输入卡那次已经踩过）。 */
-body[${OWNER_ATTR}] [role='presentation'] > [role='dialog'][aria-modal='true']:not([data-composer-card]):not([role='menu']):not([role='alertdialog']):not([data-testid='todo-panel']):not([data-dsh-plugin='update']) {
+body[${GLASS_ATTR}] [role='presentation'] > [role='dialog'][aria-modal='true']:not([data-composer-card]):not([role='menu']):not([role='alertdialog']):not([data-testid='todo-panel']):not([data-dsh-plugin='update']) {
 	/* ── v0.2.23 · 设置窗（页面级面板）─────────────────────────────────
 	   锚点用结构关系（overlay 的直接子 dialog），不写任何 CSS Module 哈希 ——
 	   哈希每次构建都会变（旧版 VOzbGW_*，新版 AnXs9G_*），写死必然静默失效。
@@ -317,11 +318,11 @@ body[${OWNER_ATTR}][data-dsh-maid-companion-low-power] [data-dsh-maid-companion-
 /* 会话切换动效（照搬 maid-atelier 皮肤的 composer dock/rise）：进入会话(dock)时
    输入卡自上落下归位，新会话/空态(rise)时输入卡自下升起归位；620ms 立绘高度过渡
    与之同步。marker 由 JS 按 data-phase hero↔active 翻转时置 body，560ms 后清除。 */
-body[${OWNER_ATTR}][data-dsh-maid-companion-motion='dock']
+body[${GLASS_ATTR}][data-dsh-maid-companion-motion='dock']
 	[data-phase='active'] [data-composer-card] {
 	animation: maidCompanionCardDock 520ms cubic-bezier(0.22, 0.78, 0.2, 1) both;
 }
-body[${OWNER_ATTR}][data-dsh-maid-companion-motion='rise']
+body[${GLASS_ATTR}][data-dsh-maid-companion-motion='rise']
 	[data-phase='hero'] [data-composer-card] {
 	animation: maidCompanionCardRise 520ms cubic-bezier(0.22, 0.78, 0.2, 1) both;
 }

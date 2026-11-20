@@ -35,7 +35,6 @@
 				}
 				motionPhase = next;
 			};
-			syncComposerMotion();
 
 			// ── 2026-10-26 · 修「设置窗卡死 / 永久骨架屏」──────────────
 			// 自激回路：本插件自己会往 DOM 里插 4 根玻璃条 + 磨砂垫层 + <svg>滤镜，
@@ -68,8 +67,11 @@
 			observer = new MutationObserver((records) => {
 				if (!enabledPref) return;
 				if (onlyOwnMutations(records)) return;   // 自己的 DOM 变动不触发重算
-				setChatActive();
-				syncVisibility();
+				if (portraitStore.getSnapshot()) {
+					setChatActive();
+					syncVisibility();
+				}
+				if (!glassStore.getSnapshot()) return;
 				syncComposerMotion();
 				// React 可能重建输入框节点（此时内联的 backdrop-filter 会丢），
 				// 检查节点是否换了，换了就去抖地重新生成位移贴图并挂回。
@@ -84,6 +86,7 @@
 			observer.observe(body, { childList: true, subtree: true, attributes: true, attributeFilter: ["data-chat-flow", "data-message-bubble", "data-phase", "aria-selected", "data-menu-material", "aria-hidden", "role", "class", "data-composer-card", "aria-modal", "data-context-menu", "data-document-zoom-controls", "data-quote-popover"] });
 
 			resizeHandler = () => {
+				if (!enabledPref || !portraitStore.getSnapshot()) return;
 				body.setAttribute("data-dsh-maid-companion-resizing", "");
 				if (resizeTimer) clearTimeout(resizeTimer);
 				resizeTimer = setTimeout(() => body.removeAttribute("data-dsh-maid-companion-resizing"), 120);
@@ -91,30 +94,35 @@
 			window.addEventListener("resize", resizeHandler);
 			if (!hasAcceleratedWebGL()) body.setAttribute("data-dsh-maid-companion-low-power", "");
 
-			const unsubEnabled = enabledStore.subscribe(() => {
-				if (enabledPref) {
-					liquid.install();
+			const syncFeatures = () => {
+				const portraits = enabledPref && portraitStore.getSnapshot();
+				const glass = enabledPref && glassStore.getSnapshot();
+				if (portraits) {
 					syncVisibility();
-					// 重新启用时强制重算 chat-active（不走边沿短路）：否则在已有会话里
-					// 关闭再打开，lastChatActive 仍为 true，setChatActive 会提前返回，
-					// 导致 chat-active 被上次关闭移除后没重新加上 → 立绘显示为初始 96%。
-					const empty = document.querySelector("[data-phase='hero']") !== null
-						|| document.querySelector("[data-phase='active'] [data-chat-flow]") === null;
-					// 与真实终态相反：setChatActive 的 active = !empty，故这里应设 lastChatActive = empty
-					// （=!active），才能确保 active !== lastChatActive、不让边沿短路，从而真正重置尺寸。
-					lastChatActive = empty;
 					setChatActive();
 				} else {
-					liquid.uninstall();
+					stage.remove();
 					body.removeAttribute(OWNER_ATTR);
 					body.removeAttribute("data-dsh-maid-companion-chat-active");
 					body.removeAttribute("data-dsh-maid-companion-resizing");
-					stage.remove();
+					clearTimeout(resizeTimer);
 					lastChatActive = false;
 				}
-			});
-
-			if (enabledPref) syncVisibility();
+				const wasGlass = body.hasAttribute(GLASS_ATTR);
+				body.toggleAttribute(GLASS_ATTR, glass);
+				if (glass && !wasGlass) {
+					syncComposerMotion();
+					liquid.install();
+				} else if (!glass && wasGlass) {
+					liquid.uninstall();
+					clearTimeout(motionTimer);
+					motionTimer = undefined;
+					motionPhase = undefined;
+					body.removeAttribute("data-dsh-maid-companion-motion");
+				}
+			};
+			const featureSubscriptions = [enabledStore, portraitStore, glassStore].map(store => store.subscribe(syncFeatures));
+			syncFeatures();
 
 			// ── 通用设置开关（React，样式与其它开关一致）──────────────────
 			try {
@@ -131,7 +139,8 @@
 				if (resizeHandler) window.removeEventListener("resize", resizeHandler);
 				if (resizeTimer) clearTimeout(resizeTimer);
 				if (motionTimer) clearTimeout(motionTimer);
-				unsubEnabled?.();
+				for (const unsubscribe of featureSubscriptions) unsubscribe();
+				body.removeAttribute(GLASS_ATTR);
 				stage.remove();
 				body.removeAttribute(OWNER_ATTR);
 				body.removeAttribute("data-dsh-maid-companion-chat-active");

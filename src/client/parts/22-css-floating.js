@@ -3,7 +3,7 @@
 //!       v0.8.0 模态遮罩（scrim）、v0.4.8 实心贴片，直到 v0.4.9 控件段之前。
 //! 依赖：同一模板字符串中段；常被 installRim/veil 分支命中，改样式前先读
 //!       LIQUID_RING_MIN_AREA=260000 闸门说明（31-material-constants.js）。
-body[${OWNER_ATTR}] :is(
+body[${GLASS_ATTR}] :is(
 	[role='menu'], [role='listbox'], [role='tooltip'],
 	[role='dialog'], [role='alertdialog'],
 	.bRhRbq_panel, .mufS8W_card, .JObwrW_panel, .Nqubda_panel,
@@ -33,23 +33,23 @@ body[${OWNER_ATTR}] :is(
 }
 
 /* Turn navigator preview: direct sampling, no added tint/frost plane. */
-body[${OWNER_ATTR}] [role='tooltip'][style*='--turn-preview-center'] {
+body[${GLASS_ATTR}] [role='tooltip'][style*='--turn-preview-center'] {
  background-color: transparent !important;
  box-shadow: 0 0 0 0.5px var(--mc-hairline), var(--dsw-elevation-panel, 0 8px 24px rgba(0,0,0,.28)), inset 0 0 20px -5px rgba(212,232,255,.20) !important;
 }
-body[${OWNER_ATTR}] [role='tooltip'][style*='--turn-preview-center']:not([data-mc-glass]) {
+body[${GLASS_ATTR}] [role='tooltip'][style*='--turn-preview-center']:not([data-mc-glass]) {
  -webkit-backdrop-filter: blur(1px) saturate(1) brightness(1.05);
  backdrop-filter: blur(1px) saturate(1) brightness(1.05);
 }
 /* Quote preview owns the direct parent surface; its text and bridge stay untouched. */
-body[${OWNER_ATTR}] div:has(> [data-quote-popover]):not([data-menu-material='translucent'] *) {
+body[${GLASS_ATTR}] div:has(> [data-quote-popover]):not([data-menu-material='translucent'] *) {
 	background-color: color-mix(in srgb, var(--dsw-specific-menu, #353638) 40%, transparent);
 	-webkit-backdrop-filter: blur(1px) saturate(1) brightness(1.05);
 	backdrop-filter: blur(1px) saturate(1) brightness(1.05);
 }
 
 /* The document zoom toolbar is a floating surface with its own layer token. */
-body[${OWNER_ATTR}] [data-document-zoom-controls]:not([data-menu-material='translucent'] *) {
+body[${GLASS_ATTR}] [data-document-zoom-controls]:not([data-menu-material='translucent'] *) {
 	background-color: color-mix(in srgb, var(--dsw-alias-bg-layer-1) 40%, transparent);
 	-webkit-backdrop-filter: blur(1px) saturate(1) brightness(1.05);
 	backdrop-filter: blur(1px) saturate(1) brightness(1.05);
@@ -58,7 +58,7 @@ body[${OWNER_ATTR}] [data-document-zoom-controls]:not([data-menu-material='trans
 /* 任务面板：它用**自己的** token --dsw-specific-tip 上色，不是 specific-menu。
    铁则：只降 alpha、保留原 token 的色相，绝不换成别的 token（换 token 就会变色）。
    放在上面那条之后，同特异度下后者生效，覆盖掉 specific-menu 的底色。 */
-body[${OWNER_ATTR}] :is([data-testid='todo-panel'], .lXshSW_root):not([data-menu-material='translucent'] *) {
+body[${GLASS_ATTR}] :is([data-testid='todo-panel'], .lXshSW_root):not([data-menu-material='translucent'] *) {
 	background-color: color-mix(in srgb, var(--dsw-specific-tip, #353638) 40%, transparent);
 	-webkit-backdrop-filter: blur(1px) saturate(1) brightness(1.05);
 	backdrop-filter: blur(1px) saturate(1) brightness(1.05);
@@ -72,7 +72,7 @@ body[${OWNER_ATTR}] :is([data-testid='todo-panel'], .lXshSW_root):not([data-menu
    ⚠️ box-shadow 是整体替换，必须写回各自原有的 elevation —— 这批浮层原本都是
       box-shadow: var(--dsw-elevation-prominent)，不写回会把它们的投影与描边抹掉。
    注：._7rgC5q_dialog 不在列（它用的是另一套 0 12px 32px 投影，不擅自改）。 */
-body[${OWNER_ATTR}] :is(
+body[${GLASS_ATTR}] :is(
 	[role='menu'], [role='listbox'], [role='tooltip'],
 	.bRhRbq_panel, .mufS8W_card, .JObwrW_panel, .Nqubda_panel,
 	._3e4SsG_menu, .QsffPG_menu, ._7KE1Ra_menu, .ZKlsPq_menu,
@@ -100,7 +100,7 @@ body[${OWNER_ATTR}] :is(
    实色，条子在视觉上等于不存在（v0.2.12 实测）。要让边缘玻璃透出后面的
    场景，面板本身必须是半透明或透明的 —— 这一条由宿主皮肤负责，本插件
    不擅自清空别人面板的背景（清空会连带毁掉正文对比度）。 */
-body[${OWNER_ATTR}] [data-mc-glass-ring] {
+body[${GLASS_ATTR}] [data-mc-glass-ring] {
 	box-sizing: border-box;
 }
 /* ❌ 已删除：.wCInkW_panel（设置窗）的玻璃规则。
@@ -123,7 +123,7 @@ body[${OWNER_ATTR}] [data-mc-glass-ring] {
    贴一圈玻璃条" —— 条子的采样源只能是面板自己的底色，所以永远是恒等变换。
    只要让【面板自己】半透明，它背后就是真正的页面背景，全尺寸面板一样可以有玻璃。
    见下方 [aria-modal='true'][role='dialog'] 规则。 */
-body[${OWNER_ATTR}] :is(._7rgC5q_dialog) {
+body[${GLASS_ATTR}] :is(._7rgC5q_dialog) {
 	/* 该弹窗自己的底色就是 --dsw-alias-bg-overlay（暗色 #61666b），保持原 token 不变。
 	   透明度 78% → 48%，与大方向一致（更通透）。 */
 	background-color: color-mix(in srgb, var(--dsw-alias-bg-overlay, #61666b) 48%, transparent);
@@ -156,13 +156,13 @@ body[${OWNER_ATTR}] :is(._7rgC5q_dialog) {
       立绘在 centerCol 里、是 viewArea 的**兄弟**，完全不受影响：
       既不会被糊（无 backdrop-filter），也不会变色（色相守恒）。
    ⚠️ 这里不写 backdrop-filter（会糊立绘），也不写 background（会整片染色）。 */
-body[${OWNER_ATTR}] [class*='Dc7zOa_viewArea'] {
+body[${GLASS_ATTR}] [class*='Dc7zOa_viewArea'] {
 	/* ① 捕获原始层色（不改本元素的 layer token，避免循环引用） */
 	--mc-bg-layer-1: var(--dsw-alias-bg-layer-1);
 	--mc-bg-layer-2: var(--dsw-alias-bg-layer-2);
 	--mc-bg-layer-3: var(--dsw-alias-bg-layer-3);
 }
-body[${OWNER_ATTR}] [class*='Dc7zOa_viewArea'] > * {
+body[${GLASS_ATTR}] [class*='Dc7zOa_viewArea'] > * {
 	/* ② 子树降 alpha：同一颜色 + 更多透明 = 面板变透，色相不变。
 	   2026-10-16 调参记录（用户逐轮反馈「轨迹再透一点」）：
 	     初版 72 / 78 / 82  →  一档 52 / 58 / 64  →  **当前 34 / 40 / 46**
@@ -198,7 +198,7 @@ body[${OWNER_ATTR}] [class*='Dc7zOa_viewArea'] > * {
    --mc-glow-alpha  内辉强度
    --mc-hairline    .5px 描边色（深色白 20% / 浅色黑 16%）
    --mc-topline     顶部 1px 亮线（模拟"器皿上沿受光"） */
-body[${OWNER_ATTR}] {
+body[${GLASS_ATTR}] {
 	--mc-tint: 30%;
 	/* v0.11.0：非输入框面 bezel 24→20 ⇒ 内辉半宽跟着 ×0.85（11.8→10），
 	   否则辉光尾会伸出折射带外，读成被禁的"四周发光边"。 */
@@ -252,7 +252,7 @@ body[${OWNER_ATTR}] {
    容器 div[role=menu] 也被旧规则命中 → 在圆角玻璃里画出一个方形发丝环。
    根锚点用 [data-menu-material]（覆盖 role=menu / role=group / listbox 三种形态），
    再整体排除"玻璃根的后代"（:not(:is(...) *)）。 */
-body[${OWNER_ATTR}] :is(
+body[${GLASS_ATTR}] :is(
 	[data-menu-material],
 	[role='tooltip'],
 	[role='dialog'][aria-modal='true']:not([data-composer-card]),
@@ -280,7 +280,7 @@ body[${OWNER_ATTR}] :is(
    就等于一块干净玻璃直接盖在正文上 —— 字叠字、无"墙感"，用户读作"贴膜"。
    Apple 的做法是玻璃只负责折射，压暗由 scrim 负责。这里补回 scrim：
    只压 modal 的 overlay，不碰 composer / 非模态浮层。 */
-body[${OWNER_ATTR}] {
+body[${GLASS_ATTR}] {
 	/* v0.11.0：**撤回自造 scrim**。宿主已经有一层 .mask rgba(0,0,0,.5)，
 	   我们再叠 .34 后透射率只剩 0.33 —— 面板内实测亮度 3,3,4，比它周围的遮罩区
 	   7,7,7 还暗，用户读作"整体变暗"。压暗交给宿主那一层就够了。 */
@@ -297,7 +297,7 @@ body[${OWNER_ATTR}] {
    面板就退化成"一层 7% 白膜盖在清晰正文上"，这正是用户看到的
    "只有透明、没有折射带、没有模糊" 和 "字叠字"。
    修法：没有遮罩模糊需求时**完全不输出 backdrop-filter**（不能写 blur(0px)）。 */
-body[${OWNER_ATTR}] [role='presentation']:has([role='dialog'][aria-modal='true']:not([data-composer-card])):not(:has(> [data-composer-card])) {
+body[${GLASS_ATTR}] [role='presentation']:has([role='dialog'][aria-modal='true']:not([data-composer-card])):not(:has(> [data-composer-card])) {
 	background-color: var(--mc-scrim) !important;
 	backdrop-filter: none !important;
 	-webkit-backdrop-filter: none !important;
@@ -309,10 +309,10 @@ body[${OWNER_ATTR}] [role='presentation']:has([role='dialog'][aria-modal='true']
    且左缘那道 1px 硬阶跃从 ΔY 3.55 降到 0.2~0.3 —— 用户说的"折射区和内部模糊区割裂"
    在面板上就是这条 tint 阶跃。浅色几乎相反：bg-overlay 近白，tint 再高也遮不住深字，
    真正压 ghost 的是 scrim，所以浅色保留 45%。 */
-body[${OWNER_ATTR}] {
+body[${GLASS_ATTR}] {
 	--mc-tint-panel: 45%;
 }
-body[data-ds-dark-theme][${OWNER_ATTR}] {
+body[data-ds-dark-theme][${GLASS_ATTR}] {
 	--mc-tint-panel: 18%;
 	/* a03 v0.9 定量：近黑底上任何白填 1% 就 +8.14 L*（JND=2.5），所以暗色玻璃**不存在
 	   "轻微白底"这一档** —— 要么 0（composer），要么走压暗。Apple HIG 也是「背景亮时加
@@ -337,14 +337,14 @@ body[data-ds-dark-theme][${OWNER_ATTR}] {
 	--mc-shadow-panel: 0 20px 60px rgba(0, 0, 0, 0.42);
 }
 /* 底部面板：宿主给 r0 + 实心底。改成与全站同语言的圆角玻璃（tint/发丝由 JS 挂）。 */
-body[${OWNER_ATTR}] [data-dsh-bottom-panel='true'] {
+body[${GLASS_ATTR}] [data-dsh-bottom-panel='true'] {
 	border-radius: 24px 24px 0 0 !important;
 	box-shadow:
 		0 0 0 0.5px var(--mc-hairline),
 		var(--mc-shadow-float),
 		inset 0 0 var(--mc-glow-blur) var(--mc-glow-spread) rgba(var(--mc-glow-rgb), var(--mc-glow-alpha)) !important;
 }
-body[${OWNER_ATTR}] [role='dialog'][aria-modal='true'][data-shortcut-modal='settings'] {
+body[${GLASS_ATTR}] [role='dialog'][aria-modal='true'][data-shortcut-modal='settings'] {
 	box-shadow:
 		0 0 0 0.5px var(--mc-hairline),
 		var(--mc-shadow-panel),
@@ -353,14 +353,14 @@ body[${OWNER_ATTR}] [role='dialog'][aria-modal='true'][data-shortcut-modal='sett
 /* v0.4.9：菜单/弹层里的**内层滚动容器**（radius 0）常被宿主画上 0.5px 方形发丝 +
    外投影；那会在圆角玻璃内部切出一个方角（用户报的「方形怪框」残影）。
    玻璃根的直系 role=menu 子层只负责滚动，不该自带装帧。 */
-body[${OWNER_ATTR}] :is([data-menu-material], [role='group']) > [role='menu'],
-body[${OWNER_ATTR}] :is([data-menu-material], [role='group']) > [role='menu'] > div:first-child {
+body[${GLASS_ATTR}] :is([data-menu-material], [role='group']) > [role='menu'],
+body[${GLASS_ATTR}] :is([data-menu-material], [role='group']) > [role='menu'] > div:first-child {
 	box-shadow: none !important;
 	background-color: transparent !important;
 }
 /* 菜单背板：宿主 64% 太实（折射被底色吃掉）→ 与其它浮层同一低底色。
    ⚠️ 只改 material 背板层，不动 root 与菜单项，宿主 hover/active 语义不变。 */
-body[${OWNER_ATTR}] [data-menu-material] > div:first-child {
+body[${GLASS_ATTR}] [data-menu-material] > div:first-child {
 	/* v0.12.0：体色不再画在元素底上（那是 1px 硬阶跃的来源），改由 ::after 磨砂芯
 	   带羽化 mask 输出；元素底保持透明，折射带才能像输入框一样"清"。 */
 	background-color: transparent !important;
@@ -382,20 +382,20 @@ body[${OWNER_ATTR}] [data-menu-material] > div:first-child {
    新结构：父 bf:none + 两个并列层（rim 清边/折射带，frost 雾面），各自直接采真实页面。 */
 /* v0.14.1：JS 打在元素上的标记是 data-mc-glass-layered（旧规则只写了 data-mc-layered，
    命中率为 0 —— isolation 一直靠 JS 内联兜住）。两个都收，避免以后靠内联才能生效。 */
-body[${OWNER_ATTR}] :is([data-mc-layered], [data-mc-glass-layered]) { isolation: isolate; }
-body[${OWNER_ATTR}] :is([data-mc-glass-rim], [data-mc-frost]) {
+body[${GLASS_ATTR}] :is([data-mc-layered], [data-mc-glass-layered]) { isolation: isolate; }
+body[${GLASS_ATTR}] :is([data-mc-glass-rim], [data-mc-frost]) {
 	position: absolute;
 	inset: 0;
 	box-sizing: border-box;
 	border-radius: inherit;
 	pointer-events: none;
 }
-body[${OWNER_ATTR}] [data-mc-glass-rim] { z-index: -2; }
+body[${GLASS_ATTR}] [data-mc-glass-rim] { z-index: -2; }
 /* v0.14.0：本层降级为**纯体色 + 羽化**（不再挂 backdrop-filter）。
    原因见 31-material-constants.js 的 v0.14.0 段：bf 元素被 overflow 祖先裁切时
    它的 mask 会被 Chromium 忽略，羽化失效 ⇒ 体色 alpha 在边缘仍是 1px 硬台阶。
    现在模糊由 rim 层一层均匀承担（无 mask、无台阶），本层只负责"越往中间越浓"的体色。 */
-body[${OWNER_ATTR}] [data-mc-frost] {
+body[${GLASS_ATTR}] [data-mc-frost] {
 	z-index: -1;
 	background-color: var(--mc-frost-tint, transparent);
 	-webkit-mask-image:

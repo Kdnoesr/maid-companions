@@ -14,6 +14,7 @@ function fixture() {
   let callback, refreshes = 0;
   const context = {
     enabledPref: true, observer: null, body: {},
+    portraitStore: { getSnapshot: () => true }, glassStore: { getSnapshot: () => true },
     CHAT_SELECTOR: "[data-chat-flow]",
     MutationObserver: class { constructor(cb) { callback = cb; } observe() {} },
     setChatActive() {}, syncVisibility() {}, syncComposerMotion() {},

@@ -4,11 +4,11 @@
 //! 边界：结束于 v0.3.7「::before 玻璃静音」注释之前。
    ⚠️ 卡片比面板"更实"是刻意的：它是承载文字的贴片，需要更高对比度；
    但仍保留 12~38% 透光 + 同一条发丝边 + 同一支内辉，读起来是同一块玻璃的厚处。 */
-body[${OWNER_ATTR}] {
+body[${GLASS_ATTR}] {
 	--mc-card-tint: 45%;
 	--mc-card-glow-alpha: 0;
 }
-body[${OWNER_ATTR}] [data-mc-card] {
+body[${GLASS_ATTR}] [data-mc-card] {
 	background-color: var(--mc-fill-card) !important;
 	box-shadow:
 		0 0 0 0.5px var(--mc-hairline),

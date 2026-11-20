@@ -3,7 +3,7 @@
 //! 依赖：同一模板字符串中段，不得自行闭合。
 //! 说明：composer 的材质（backdrop-filter/位移贴图/内辉）由 JS 运行时注入，
 //!       本块只负责几何，不要在 CSS 里另加玻璃。
-body[${OWNER_ATTR}][data-dsh-maid-companion-motion] [data-composer-card] {
+body[${GLASS_ATTR}][data-dsh-maid-companion-motion] [data-composer-card] {
 	will-change: transform, opacity;
 }
 @keyframes maidCompanionCardDock {
@@ -15,7 +15,7 @@ body[${OWNER_ATTR}][data-dsh-maid-companion-motion] [data-composer-card] {
 	to { opacity: 1; transform: none; }
 }
 /* ═══ 对话区毛玻璃（半透明化）· 仅插件启用时生效 ═══════════════════════════
-   整块作用域限定在 body[${OWNER_ATTR}]（由本插件设置/移除），所以关闭插件即整块
+   整块作用域限定在 body[${GLASS_ATTR}]（由本插件设置/移除），所以关闭插件即整块
    失效、100% 回到原版 UI。
 
    设计依据（第一性原理 + 对抗式审查，2026-09-13）：
@@ -54,7 +54,7 @@ body[${OWNER_ATTR}][data-dsh-maid-companion-motion] [data-composer-card] {
    ✅ 保留做法：只有 [data-composer-card] 这一层做半透明 + 毛玻璃。
       它是唯一真正盖住立绘的面；列底色保持 --dsw-alias-bg-base 原样，
       因此对话区背景与「未启用插件」时逐像素一致（见 README 验收口径）。 */
-body[${OWNER_ATTR}] [data-composer-card] {
+body[${GLASS_ATTR}] [data-composer-card] {
 	/* 输入卡 = 用户说的"对话框、输入文字的地方"。
 	   色调浓度对齐 demo 面板的 0.00（其 s-tint → --tint-a，0 = 玻璃不填色）：
 	   于是卡片**不再有任何底色**，纯靠背后的折射 + 模糊成形 —— 这就是 demo 里
@@ -81,7 +81,7 @@ body[${OWNER_ATTR}] [data-composer-card] {
 }
 
 /* ═══ 浮层 / 气泡 / 窗口 · 与对话区同款「半透明 + 毛玻璃」════════════════════
-   仅插件启用时生效（作用域 body[${OWNER_ATTR}]），关闭插件即整块失效。
+   仅插件启用时生效（作用域 body[${GLASS_ATTR}]），关闭插件即整块失效。
 
    ── 第一性原理①：为什么必须同时降不透明度，而不是只加模糊 ──────────────
    用户要的是"以对话区的模糊透明效果为准"，而对话区输入卡就是

@@ -36,7 +36,6 @@
 			const liquid = createLiquidGlass();
 			try { globalThis.__mcDebug = () => liquid.debug(); } catch { /* ignore */ }
 			ctx.effect(() => {
-				if (enabledPref) liquid.install();
 				return () => liquid.uninstall();
 			}, "maid-companions: liquid glass");
 

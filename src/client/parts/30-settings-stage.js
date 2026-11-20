@@ -11,7 +11,7 @@
 		inset 0 0 var(--mc-glow-blur) var(--mc-glow-spread) rgba(var(--mc-glow-rgb), var(--mc-glow-alpha)) !important;
 }
 @media (prefers-reduced-transparency: reduce) {
-	body[${OWNER_ATTR}] :is([data-mc-glass], [role='menu'], [role='dialog'][aria-modal='true']) {
+	body[${GLASS_ATTR}] :is([data-mc-glass], [role='menu'], [role='dialog'][aria-modal='true']) {
 		background-color: color-mix(in srgb, var(--dsw-alias-bg-base, #2c2c2e) 92%, transparent);
 	}
 }
@@ -77,6 +77,24 @@
 			},
 		};
 
+		function createFeatureStore(storageKey) {
+			let value = true;
+			try { value = window.localStorage.getItem(storageKey) !== "false"; } catch { }
+			const listeners = new Set();
+			return {
+				getSnapshot: () => value,
+				subscribe: (listener) => { listeners.add(listener); return () => listeners.delete(listener); },
+				set: (next, persist = true) => {
+					if (value === next) return;
+					value = next;
+					if (persist) { try { window.localStorage.setItem(storageKey, String(next)); } catch { } }
+					for (const listener of listeners) listener();
+				},
+			};
+		}
+		const portraitStore = createFeatureStore("maid-companions.portrait");
+		const glassStore = createFeatureStore("maid-companions.glass");
+
 		// ── 角色舞台 ──────────────────────────────────────────────────────
 		function createStage() {
 			const stage = document.createElement("div");
@@ -119,19 +137,29 @@
 
 		// ── 设置开关（React，结构与样式对齐宿主 SettingsField + Switch）──────
 		// 宿主结构：field > (head > label + switch) + help
-		function MaidCompanionsSetting() {
-			const enabled = React.useSyncExternalStore(enabledStore.subscribe, enabledStore.getSnapshot);
+		function MaidCompanionsSwitchRow({ label, help, store }) {
+			const enabled = React.useSyncExternalStore(store.subscribe, store.getSnapshot);
 			return React.createElement("div", { className: "mc-setting-field" },
 				React.createElement("div", { className: "mc-setting-head" },
-					React.createElement("div", { className: "mc-setting-label" }, "左右鲸鱼娘女仆"),
+					React.createElement("div", { className: "mc-setting-label" }, label),
 					React.createElement("button", {
 						type: "button", role: "switch",
-						"aria-label": "左右鲸鱼娘女仆",
+						"aria-label": label,
 						"aria-checked": String(enabled),
 						className: "mc-setting-switch",
-						onClick: () => enabledStore.set(!enabled),
+						onClick: () => store.set(!enabled),
 					}, React.createElement("span", { className: "mc-setting-switch-thumb", "aria-hidden": "true" }))),
-				React.createElement("div", { className: "mc-setting-help" }, "在默认 DSH 界面下方左右显示两位鲸鱼娘女仆立绘，随时可关闭"));
+				help && React.createElement("div", { className: "mc-setting-help" }, help));
+		}
+		function MaidCompanionsSetting() {
+			return React.createElement(React.Fragment, null,
+				React.createElement(MaidCompanionsSwitchRow, {
+					label: "左右鲸鱼娘女仆",
+					help: "控制鲸鱼娘女仆立绘和输入框液态玻璃效果的总开关",
+					store: enabledStore,
+				}),
+				React.createElement(MaidCompanionsSwitchRow, { label: "显示女仆立绘", store: portraitStore }),
+				React.createElement(MaidCompanionsSwitchRow, { label: "液态玻璃效果", store: glassStore }));
 		}
 
 		// ── Liquid Glass：对话输入框的液态玻璃折射（实验性）─────────────────
