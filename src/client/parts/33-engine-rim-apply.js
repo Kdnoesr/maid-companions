@@ -168,7 +168,7 @@
 				dropLayer(inst, "rimLayer");
 				try { if (inst.el) inst.el.removeAttribute("data-mc-glass-layered"); } catch { /* 忽略 */ }
 			};
-			const FROST_GLOW = "inset 0 0 17px -4.25px rgba(212,232,255,0.20)";
+			const RIM_LIGHT = "inset 0.65px 0.85px 1px -0.25px rgb(255 255 255 / 0.35), inset -0.65px -0.85px 1px -0.35px rgb(255 255 255 / 0.15), inset 0 -2px 4px -3px rgb(0 0 0 / 0.34)";
 			const applyTo = (el, inst) => {
 				try {
 					const modernMenu = el.getAttribute("data-menu-material") === "translucent";
@@ -266,7 +266,9 @@
 					//   的源头：同一个输入框在不同窗口宽度下折射强度差 2×。统一到 10 后，
 					//   默认布局只差 −3%（不可见），窄布局收回 2× 过冲，全站同一强度。
 					const dTargetEff = Math.min(MAT.dispTarget, 0.4545 * bezel);
-					const map = buildMap(w, h, radius, bezel, null, 1, null, dTargetEff < 2 ? 0 : dTargetEff);
+					const useConvexRim = isFloat && !el.hasAttribute("data-message-bubble");
+					const profile = useConvexRim ? "convex-rim" : null;
+					const map = buildMap(w, h, radius, bezel, null, 1, profile, useConvexRim || dTargetEff >= 2 ? dTargetEff : 0);
 					if (map === null) {
 						resetModern();
 						if (!modernMenu) { restoreStyle(inst.styles, el, "backdrop-filter"); restoreStyle(inst.styles, el, "-webkit-backdrop-filter"); }
@@ -313,8 +315,8 @@
 						//   菜单族结构 = root(_surface) + 子层(_material)，bf 只挂子层；
 						//   若内辉留在 root，视觉上会被子层遮住（等于没有），审计也会判"面缺内辉"。
 						writeStyle(inst.styles, el, "box-shadow", "0 0 0 0.5px var(--mc-hairline), var(--mc-shadow-float)", "important");
-						writeStyle(inst.materialStyles || (inst.materialStyles = {}), material, "box-shadow", "inset 0 0 17px -4.25px rgba(212,232,255,0.20)", "important");
-						if (!inst.material) { inst.material = material; inst.materialStyles = {}; if (ro !== null) ro.observe(material); }
+						writeStyle(inst.materialStyles || (inst.materialStyles = {}), material, "box-shadow", RIM_LIGHT, "important");
+						if (!inst.material) { inst.material = material; if (ro !== null) ro.observe(material); }
 						writeStyle(inst.styles, el, "backdrop-filter", "none", "important");
 						writeStyle(inst.styles, el, "-webkit-backdrop-filter", "none", "important");
 						writeStyle(inst.materialStyles, material, "backdrop-filter", value, "important");
@@ -358,6 +360,8 @@
 						} catch { /* 忽略 */ }
 						const rim = ensureLayer(el, inst, "rimLayer", "data-mc-glass-rim", null, radius);
 						const rimSt = layerStyles(inst, "rimLayer");
+						if (useConvexRim) writeStyle(rimSt, rim, "box-shadow", RIM_LIGHT, "important");
+						else restoreStyle(rimSt, rim, "box-shadow");
 						writeStyle(rimSt, rim, "backdrop-filter", value, "important");
 						writeStyle(rimSt, rim, "-webkit-backdrop-filter", value, "important");
 						const frost = ensureLayer(el, inst, "frost", "data-mc-frost", rim, radius);

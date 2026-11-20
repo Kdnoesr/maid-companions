@@ -160,7 +160,12 @@
 						//   一圈 4.7× 的凸包（"里面糊了一圈"），quad2 的极大值挪到物理外缘
 						//   u≈7（被 0.5px 高光边盖住）—— 带均值 0.81 / 带最小 0.67，
 						//   对现状 0.67 / 0.28。这就是"折射区与内部不再割裂"的数值依据。
-						if (ease === "quad2") {
+						if (ease === "convex-rim") {
+							// Convex shoulder with zero slope at the clear center and a bounded edge slope.
+							const depth = clamp(-sd / sBezel, 0, 1);
+							const edge = 1 - depth;
+							m = edge * edge * (1 + 0.5 * depth);
+						} else if (ease === "quad2") {
 							const t = Math.min(1, Math.max(0, -sd / sBezel));
 							m = (1 - t) * (1 - t);
 						} else if (ease === "global") {
@@ -225,7 +230,10 @@
 				//   144×110 菜单只有 5.0）—— 这就是"像贴了层透明膜、没有透镜渐变"的根因。
 				//   满量程编码：enc=2·maxD ⇒ raw/enc ∈ [−0.5,0.5]，C 刚好占满 0..255 不饱和；
 				//   解码 scale=2·dTarget ⇒ d_peak = scale×0.5 = dTarget，任何尺寸恒等。
-				const enc = dTarget ? 2 * maxD : maxD / dispScale;
+				// Use the continuous peak for the convex rim to keep subpixel sampling
+				// and resizing from amplifying the profile at small dimensions.
+				const peak = ease === "convex-rim" ? k * sBezel : maxD;
+				const enc = dTarget ? 2 * peak : maxD / dispScale;
 				const scale = dTarget ? 2 * dTarget : enc * 2, data = img.data;
 				for (let i = 0, p = 0; i < raw.length; i += 2, p += 4) {
 					data[p] = clamp(raw[i] / enc + 0.5, 0, 1) * 255;       // R → X
