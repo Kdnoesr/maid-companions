@@ -58,16 +58,74 @@ const DESCENDANT_SCOPES = [
   '[data-composer-seat]',
   '[data-dsh-maid-companion-character]',
   '[data-dsh-maid-companion-stage]',
+  '[data-dsh-skill-explorer-view]',
 ]
 const APPEARANCE = /\b(background(?:-color|-image)?|backdrop-filter|filter|opacity|box-shadow|mix-blend-mode)\s*:/
+
+// Only split at the outer level; commas in :is(), attributes and strings are not branches.
+function splitBranches(selector) {
+  const branches = []
+  let start = 0, parens = 0, brackets = 0, quote = '', escaped = false
+  for (let i = 0; i < selector.length; i++) {
+    const c = selector[i]
+    if (escaped) { escaped = false; continue }
+    if (c === '\\') { escaped = true; continue }
+    if (quote) { if (c === quote) quote = ''; continue }
+    if (c === '"' || c === "'") { quote = c; continue }
+    if (c === '[') brackets++
+    else if (c === ']') brackets--
+    else if (!brackets && c === '(') parens++
+    else if (!brackets && c === ')') parens--
+    else if (!brackets && !parens && c === ',') {
+      branches.push(selector.slice(start, i))
+      start = i + 1
+    }
+    if (brackets < 0 || parens < 0) return [selector]
+  }
+  if (quote || escaped || brackets || parens) return [selector]
+  branches.push(selector.slice(start))
+  return branches
+}
+
+// Require a real descendant combinator after the root and a direct attribute
+// selector outside functional pseudo-classes. Sibling combinators are unsafe.
+function isScopedDescendant(branch) {
+  let parens = 0, brackets = 0, quote = '', escaped = false
+  let rootEnd = -1, descendant = false, scoped = false
+  for (let i = 0; i < branch.length; i++) {
+    if (!parens && !brackets && branch.startsWith(ROOT_SELECTOR, i)) {
+      rootEnd = i + ROOT_SELECTOR.length
+      descendant = false
+      scoped = false
+      i = rootEnd - 1
+      continue
+    }
+    const c = branch[i]
+    if (escaped) { escaped = false; continue }
+    if (c === '\\') { escaped = true; continue }
+    if (quote) { if (c === quote) quote = ''; continue }
+    if (c === '"' || c === "'") { quote = c; continue }
+    if (!parens && !brackets && rootEnd >= 0 && i >= rootEnd) {
+      if (c === '+' || c === '~' || c === '|') return false
+      if (c === '>' || /\s/.test(c)) descendant = true
+      if (descendant && DESCENDANT_SCOPES.some((s) => branch.startsWith(s, i))) scoped = true
+    }
+    if (c === '[') brackets++
+    else if (c === ']') brackets--
+    else if (!brackets && c === '(') parens++
+    else if (!brackets && c === ')') parens--
+  }
+  return scoped && !quote && !escaped && !brackets && !parens
+}
 
 for (const m of parseable.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
   const selector = m[1].trim()
   const decls = m[2]
-  const targetsColumn =
-    selector.includes('centerCol') || selector.includes("data-pane='conversation'")
-  if (!targetsColumn) continue
-  if (DESCENDANT_SCOPES.some((s) => selector.includes(s))) continue // 收窄到子元素 -> 允许
+  const unsafe = splitBranches(selector).some((branch) => {
+    const targetsColumn = branch.includes('centerCol') || branch.includes("data-pane='conversation'")
+    return targetsColumn && !isScopedDescendant(branch)
+  })
+  if (!unsafe) continue
   const hit = decls.match(APPEARANCE)
   if (hit) {
     problems.push(
@@ -97,7 +155,7 @@ const SCOPE = `body[${OWNER_ATTR}]`
 for (const m of parseable.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
   const selector = m[1].trim().replace(/\s+/g, ' ')
   if (!APPEARANCE.test(m[2])) continue
-  if (selector.startsWith(SCOPE)) continue
+  if (splitBranches(selector).every((branch) => branch.trim().startsWith(SCOPE))) continue
   problems.push(
     `[D] 规则未被插件作用域包住：「${selector}」\n` +
       `      -> 关闭插件后它依然生效，违反"关闭即恢复原版 UI"。`,

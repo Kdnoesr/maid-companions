@@ -1,0 +1,274 @@
+{
+  "schema": "maid-companions/client-parts@2",
+  "target": "lib/client.js",
+  "targetBytes": 1135544,
+  "targetSha256": "666ee261893f2718f8459a794f4f6d6749274fd2748a756bb55be5ab2609262f",
+  "note": "parts 顶部 //! 头注释由 assemble-client.mjs 剥除后再拼接；禁止手改 parts（资产走 inject-images.mjs）。目标漂移时用 scripts/split-client.mjs 按本表重建。",
+  "parts": [
+    {
+      "file": "00-preamble.js",
+      "startLine": 1,
+      "endLine": 146,
+      "asset": false,
+      "header": [
+        "//! 00-preamble：整份 client.js 的文件头。",
+        "//! 内容：__ModuleLoader__.load 外壳、banner/插件元数据注释、require 与模块级常量。",
+        "//! 依赖：无（必须最先拼接）。",
+        "//! 注意：此段含文件开头 banner，改动会改变插件 id，勿手改。"
+      ],
+      "headerBytes": 284,
+      "payloadBytes": 12431,
+      "payloadSha256": "f169fff98011634b27c66e465cee627d00d2b5c4ebbf60bf2b3ed2b84dfad318",
+      "startByte": 0,
+      "endByte": 12431
+    },
+    {
+      "file": "10-asset-maid-left.js",
+      "startLine": 147,
+      "endLine": 147,
+      "asset": true,
+      "header": [
+        "//! 10-asset-maid-left：左侧立绘 base64 资产（单行，381,679 B）。",
+        "//! 内容：const MAID_LEFT = \"data:image/webp;base64,...\"（286,224 B 原始 webp）。",
+        "//! 资产，勿手改。改动请走 scripts/inject-images.mjs 重新注入。",
+        "//! 单独成文件仅因体积超过 60 KB 预算，不做任何代码意图。"
+      ],
+      "headerBytes": 330,
+      "payloadBytes": 381679,
+      "payloadSha256": "7f6680bb1b34e96d13fbf82cd340ed2e57c7d98d9d549fd4ff1fecb744661838",
+      "startByte": 12431,
+      "endByte": 394110
+    },
+    {
+      "file": "11-asset-maid-right.js",
+      "startLine": 148,
+      "endLine": 148,
+      "asset": true,
+      "header": [
+        "//! 11-asset-maid-right：右侧立绘 base64 资产（单行，529,496 B）。",
+        "//! 内容：const MAID_RIGHT = \"data:image/webp;base64,...\"（397,084 B 原始 webp）。",
+        "//! 资产，勿手改。改动请走 scripts/inject-images.mjs 重新注入。",
+        "//! 单独成文件仅因体积超过 60 KB 预算，不做任何代码意图。"
+      ],
+      "headerBytes": 332,
+      "payloadBytes": 529495,
+      "payloadSha256": "cc72f1b158def7ce804cdef58cdf67d354950b5e7566da320c521dba1a1c156e",
+      "startByte": 394110,
+      "endByte": 923605
+    },
+    {
+      "file": "20-css-stage-base.js",
+      "startLine": 149,
+      "endLine": 470,
+      "asset": false,
+      "header": [
+        "//! 20-css-stage-base：STAGE_CSS 第 1 块 —— 舞台/容器/主面板基础样式 + 对话区毛玻璃。",
+        "//! 内容：空行与 STAGE_CSS 注释头、舞台根/座位/滚动体骨架、v0.2.18 设置窗玻璃、",
+        "//!       「对话区毛玻璃」段（到 459 行 composer 段之前）。",
+        "//! 依赖：同一模板字符串，被 21-24 块续写，禁止单独闭合反引号。",
+        "//! 边界：结束于舞台底/对话区段末，下一块从 [data-composer-card] 开始。"
+      ],
+      "headerBytes": 479,
+      "payloadBytes": 22554,
+      "payloadSha256": "e74e2ee3976d99723a04bba75fccc06f7bfd6451d7b71bc0ce4663757df8e3af",
+      "startByte": 923605,
+      "endByte": 946159
+    },
+    {
+      "file": "21-css-composer.js",
+      "startLine": 471,
+      "endLine": 578,
+      "asset": false,
+      "header": [
+        "//! 21-css-composer：STAGE_CSS 第 2 块 —— 输入框（composer）区域样式。",
+        "//! 内容：[data-composer-card] 动效/遮罩/环形焦点/占位符等几何与排版。",
+        "//! 依赖：同一模板字符串中段，不得自行闭合。",
+        "//! 说明：composer 的材质（backdrop-filter/位移贴图/内辉）由 JS 运行时注入，",
+        "//!       本块只负责几何，不要在 CSS 里另加玻璃。"
+      ],
+      "headerBytes": 410,
+      "payloadBytes": 8060,
+      "payloadSha256": "c6bec6aa1a8b524f5bf17c804fe70c9e21221479348f3957a4fe59daa70327eb",
+      "startByte": 946159,
+      "endByte": 954219
+    },
+    {
+      "file": "22-css-floating.js",
+      "startLine": 579,
+      "endLine": 987,
+      "asset": false,
+      "header": [
+        "//! 22-css-floating：STAGE_CSS 第 3 块 —— 浮层/菜单/弹窗/气泡/面板样式。",
+        "//! 内容：浮层与气泡同款半透明、主内容区面板透明、v0.3.0 统一材质层、",
+        "//!       v0.8.0 模态遮罩（scrim）、v0.4.8 实心贴片，直到 v0.4.9 控件段之前。",
+        "//! 依赖：同一模板字符串中段；常被 installRim/veil 分支命中，改样式前先读",
+        "//!       LIQUID_RING_MIN_AREA=260000 闸门说明（31-material-constants.js）。"
+      ],
+      "headerBytes": 474,
+      "payloadBytes": 28689,
+      "payloadSha256": "0eba63cccbec0c9ae50d8efb46c476d295981471ee94196e57984c1906a216f9",
+      "startByte": 954219,
+      "endByte": 982908
+    },
+    {
+      "file": "23-css-controls.js",
+      "startLine": 988,
+      "endLine": 1199,
+      "asset": false,
+      "header": [
+        "//! 23-css-controls：STAGE_CSS 第 4 块 —— v0.4.9 玻璃面控件材质。",
+        "//! 内容：菜单项/按钮/开关/标签页/滚动容器发丝等控件三态样式（合并自 a08 v2.1）。",
+        "//! 依赖：同一模板字符串中段；含 --mc-* 变量使用方（定义见 24 块与 30 块）。",
+        "//! 边界：结束于 v0.3.7「::before 玻璃静音」注释之前。"
+      ],
+      "headerBytes": 372,
+      "payloadBytes": 13629,
+      "payloadSha256": "dd0ba97b5109c96b507a8433d42d4eb475387687684452ef82f750c4b3f8a748",
+      "startByte": 982908,
+      "endByte": 996537
+    },
+    {
+      "file": "24-css-tokens-legacy.js",
+      "startLine": 1200,
+      "endLine": 1353,
+      "asset": false,
+      "header": [
+        "//! 24-css-tokens-legacy：STAGE_CSS 第 5 块 —— 静音规则、页面级玻璃、模板收尾。",
+        "//! 内容：v0.3.7 ::before 玻璃静音、v0.3.7 玻璃面内控件材质、v0.6.0 页面级玻璃",
+        "//!       控件（新会话按钮/用户气泡），直到模板字符串闭合（第 1246 行）之前。",
+        "//! 依赖：本块是 STAGE_CSS 最后一段，必须与 20-23 顺序拼接。"
+      ],
+      "headerBytes": 392,
+      "payloadBytes": 10598,
+      "payloadSha256": "96cebe3322fccbb570a556d3bf5107d12e35067d0fd70c02d2cb9939b7a5c912",
+      "startByte": 996537,
+      "endByte": 1007135
+    },
+    {
+      "file": "30-settings-stage.js",
+      "startLine": 1354,
+      "endLine": 1495,
+      "asset": false,
+      "header": [
+        "//! 30-settings-stage：STAGE_CSS 收尾 + 设置面板 + 启用状态存储 + 舞台创建。",
+        "//! 内容：STAGE_CSS 的 .trim() 收尾、SETTINGS_CSS 模板（到 .trim()）、",
+        "//!       readEnabled/enabledStore、createStage/findRoot/ensureStage/",
+        "//!       hasAcceleratedWebGL、MaidCompanionsSetting 组件。",
+        "//! 依赖：STAGE_CSS（20-24 块）；被 40-lifecycle-exports 的 apply() 调用。"
+      ],
+      "headerBytes": 401,
+      "payloadBytes": 8841,
+      "payloadSha256": "af7ff44c57b6988f10b3c9d1a82d231cbdabb64bd9034958888ad29df5052ecb",
+      "startByte": 1007135,
+      "endByte": 1015976
+    },
+    {
+      "file": "31-material-constants.js",
+      "startLine": 1496,
+      "endLine": 1669,
+      "asset": false,
+      "header": [
+        "//! 31-material-constants：玻璃材质参数表（唯一调参入口）。",
+        "//! 内容：const LIQUID（strength 0.8/bezelPx 24/blurPx 1/saturate 1/brightness 1.05…）、",
+        "//!       const MAT（卡片/浮层底色与 tint 百分比）、LIQUID_FILTER_ID、",
+        "//!       LIQUID_SELECTOR/MAX_AREA/PIXEL_BUDGET/RING_MIN_AREA/RING_WIDTH 闸门常量。",
+        "//! 依赖：无运行时依赖；被 32-material-engine-core 全量读取。",
+        "//! 铁律：改数值必须同步 docs 与 v06/contract，否则输入框材质会跑偏。"
+      ],
+      "headerBytes": 519,
+      "payloadBytes": 15245,
+      "payloadSha256": "1c8758da658d8b4486755d884e4f60dd4e0275109389812f3494e7a57dac56b6",
+      "startByte": 1015976,
+      "endByte": 1031221
+    },
+    {
+      "file": "32-material-engine-core.js",
+      "startLine": 1670,
+      "endLine": 2525,
+      "asset": false,
+      "header": [
+        "//! 32-material-engine-core：createLiquidGlass 闭包前半 —— 数学、贴图、生命周期。",
+        "//! 内容：SVGNS/clamp/smoothStep/glassParams/surfaceKind/roundedRectSDF、MAP_MAX_EDGE、",
+        "//!       mapCache、buildMap（feImage 位移贴图）、instances/ro/timer/uid/themeObs、",
+        "//!       collectTargets、writeStyle/restoreStyle、mount/removeRing、RIM_*/VEIL_* 常量、",
+        "//!       applyToRef、CARD_MIN_AREA/alphaOf、decorateCards/undecorateCards、installRim、",
+        "//!       removeRim/clearMaterial/hasBeforeGlass/muteBefore/restoreBefore、unmount。",
+        "//! 依赖：31 的 LIQUID/MAT/LIQUID_FILTER_ID；本块是闭包内原样切片，外层仍是",
+        "//!       function createLiquidGlass() {，本轮不做语义重构（TODO 见 parts/README.md）。"
+      ],
+      "headerBytes": 760,
+      "payloadBytes": 54130,
+      "payloadSha256": "6188daa5a6aa257e5debc33bd4cbc819b79eeebcf265a8d31ddd91e70824cdc1",
+      "startByte": 1031221,
+      "endByte": 1085351
+    },
+    {
+      "file": "33-engine-rim-apply.js",
+      "startLine": 2526,
+      "endLine": 2905,
+      "asset": false,
+      "header": [
+        "//! Per-element liquid glass material application.",
+        "//! Uses the geometry, map cache, and rim helpers from part 32.",
+        "//! Shares the createLiquidGlass closure with part 34."
+      ],
+      "headerBytes": 170,
+      "payloadBytes": 24931,
+      "payloadSha256": "832620b5ba8eae9f33481c140f585ff17025446206f855fa51ea2d86e60ef288",
+      "startByte": 1085351,
+      "endByte": 1110282
+    },
+    {
+      "file": "34-engine-observers.js",
+      "asset": false,
+      "header": [
+        "//! Visibility and resize observers, reconciliation, and engine lifecycle.",
+        "//! Continues the createLiquidGlass closure from part 33.",
+        "//! Part 40 finishes teardown and exports the client plugin."
+      ],
+      "headerBytes": 194,
+      "payloadBytes": 6080,
+      "payloadSha256": "3e9386eba57805649ebb191ec42c8c7b7758a5b1f6c1b3a045f1bc463f0c494b",
+      "startByte": 1110282,
+      "endByte": 1116362,
+      "startLine": 2906,
+      "endLine": 3044
+    },
+    {
+      "file": "40-lifecycle-exports.js",
+      "startLine": 3045,
+      "endLine": 3102,
+      "asset": false,
+      "header": [
+        "//! 40-lifecycle-exports：插件生命周期入口与 exports 赋值。",
+        "//! 内容：function apply(ctx)（插件装配、可见性同步、composer 动效、设置项注册、",
+        "//!       事件订阅）、exports.apply/inject 赋值、return module.exports 与外壳收尾。",
+        "//! 依赖：30-settings-stage、32/33 材质引擎；被宿主 loader 在激活插件时调用。",
+        "//! 注意：导出名与赋值是 loader 契约，勿增删。"
+      ],
+      "headerBytes": 440,
+      "payloadBytes": 2686,
+      "payloadSha256": "e1da0ea7f2919800f039d7d18f94895efe8323275dbc3d9858a06b72edaaa824",
+      "startByte": 1116362,
+      "endByte": 1119048
+    },
+    {
+      "file": "90-dev-harness.js",
+      "startLine": 3103,
+      "endLine": 3421,
+      "asset": false,
+      "header": [
+        "//! 90-dev-harness：本地调试 harness（LG27-HARNESS-BEGIN/END 包裹）。",
+        "//! 内容：window.__mcDev 调试桥、热重载与手工触发入口，仅供开发。",
+        "//! 依赖：前 12 块的导出；不放业务逻辑。",
+        "//! 发布：构建/交付前必须整段剥离（v09/scripts/check_artifact.mjs 会拒绝无 --allow-harness 的产物）。"
+      ],
+      "headerBytes": 352,
+      "payloadBytes": 16496,
+      "payloadSha256": "767a2f5dfbc9cb6cbe7b457380e32077013b65f6e2a66fa584760ef009dd0f31",
+      "startByte": 1119048,
+      "endByte": 1135544
+    }
+  ],
+  "partsHash": "12a15b84a889db15721f46e8a9d373e32337e3f903bd4d68bccc7fc4058e0149"
+}

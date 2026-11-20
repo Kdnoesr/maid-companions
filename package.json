@@ -1,7 +1,7 @@
 {
   "name": "@kdnoesr/maid-companions",
-  "version": "0.2.11",
-  "description": "左右鲸鱼娘女仆立绘 + 对话区/浮层液态玻璃质感（原始 UI 也显示，通用设置开关控制）。2026-10-09 适配 DSH Desktop 0.2（客户端哈希类名按 0.2 实测重映射）。2026-10-16 功能页分层与半透明：借 display:contents 槽宿主把页根抬到立绘之上；页内 bg-base 透明、bg-layer-1/2/3 降 alpha（同 maid-atelier 机制）；轨迹/对话 viewArea 三档 alpha 收在 34/40/46%。技能中心因整页只有 bg-base（无 layer 卡片兜底）、文字直压立绘，单独按 42% 铺一层 input-major 底色，其余面板不动。",
+  "version": "0.6.0",
+  "description": "左右鲸鱼娘女仆立绘 + 液态玻璃（v0.5.0 统一材质：输入框为基准，浮层/面板/控件共用一套折射与模糊语言）",
   "type": "module",
   "main": "./lib/index.js",
   "license": "BSD-3-Clause",
@@ -16,10 +16,7 @@
   "files": [
     "lib",
     "cordis.patch.yml",
-    "README.md",
-    "LICENSE",
-    "LICENSE-ARTWORK",
-    "NOTICE"
+    "README.md"
   ],
   "exports": {
     ".": "./lib/index.js",
@@ -47,15 +44,11 @@
     "@deepseek-ai/dsh-client-ui-slots": ">=0.2.0-rc.2"
   },
   "peerDependenciesMeta": {
-    "@deepseek-ai/dsh-client-runtime": { "optional": true },
-    "@deepseek-ai/dsh-client-ui-slots": { "optional": true }
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/kdnoesr/maid-companions.git"
-  },
-  "bugs": {
-    "url": "https://github.com/kdnoesr/maid-companions/issues"
-  },
-  "homepage": "https://github.com/kdnoesr/maid-companions#readme"
+    "@deepseek-ai/dsh-client-runtime": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-client-ui-slots": {
+      "optional": true
+    }
+  }
 }

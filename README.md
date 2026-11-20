@@ -12,7 +12,7 @@
 
 ## 安装
 
-### 方式一：从 npm 安装（推荐）
+### 方式一：从 npm 安装（预留，尚未发布）
 
 在 DSH 侧栏「插件」→「添加插件」里填入包名：
 
@@ -26,7 +26,9 @@
 dsh plugin --profile desktop add '@kdnoesr/maid-companions'
 ```
 
-### 方式二：从 GitHub 安装
+> 该包名目前**尚未发布到 npm**，现在请用下面的 GitHub 方式安装。
+
+### 方式二：从 GitHub 安装（当前推荐）
 
 在同一个「添加插件」框里填入（只填地址，不加 `dsh plugin add`）：
 

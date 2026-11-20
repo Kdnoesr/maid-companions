@@ -1,10 +1,8 @@
-# ═══ 重要：lib/ 必须入库 ═══
-# lib/client.js 是本插件**唯一的实现**（940KB，含立绘 base64）。
-# 这里曾经写着 lib/，会导致 clone 下来只有一个 1.3KB 的桩，插件完全跑不起来。
-# src/ 下是旧的桩代码，不要运行 scripts/build.sh（它会覆盖 lib/client.js）。
-# 详见 README「调参」一节。
-#
-# lib/
+# ═══ 重要：lib/client.js 必须入库 ═══
+# lib/client.js 是本插件**唯一的实现**（~1.1MB，含立绘 base64）。DSH 运行时只认它。
+# 它由 src/client/parts/*.js 按 manifest.json 拼装而成：
+#   node scripts/rebuild-parts.mjs && node scripts/assemble-client.mjs --check
+# 入库时两者都要提交，方便审阅与回滚。
 
 node_modules/
 *.tsbuildinfo
@@ -24,3 +22,15 @@ backups/
 *.bak-*
 *.orig
 _tmp_*
+lib/client.js.*
+*.stage
+
+# 实验截图 / 一次性探针脚本（只保留文档正文）
+docs/*.png
+docs/img-lg2/
+docs/probe-settings.js
+docs/rim-probe*.cjs
+
+# 旧构建产物（唯一实现是 lib/client.js）
+/client.js
+lib/client-test.js
