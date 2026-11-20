@@ -1,6 +1,9 @@
 # 左右鲸鱼娘女仆（maid-companions）
 
-一个 [DeepSeek Harness](https://github.com/deepseek-ai)（DSH）Web 插件：在对话区左右显示两位鲸鱼娘女仆立绘，
+[![npm](https://img.shields.io/npm/v/@kdnoesr/maid-companions?label=npm)](https://www.npmjs.com/package/@kdnoesr/maid-companions)
+[![license](https://img.shields.io/badge/license-BSD--3--Clause-blue)](LICENSE)
+
+一个 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（DSH）Web 插件：在对话区左右显示两位鲸鱼娘女仆立绘，
 并给对话输入框与各类浮层加上**液态玻璃（Liquid Glass）**质感。
 
 - **纯客户端插件**，不改动 DSH 本体、不写任何数据、不发任何网络请求
@@ -26,8 +29,8 @@
 dsh plugin --profile desktop add '@kdnoesr/maid-companions'
 ```
 
-> npm 包不需要构建授权，装的就是仓库里已构建好的 `lib/client.js`。
-> 如果 npm 上还没有这个版本，请用下面的 GitHub 方式安装。
+> 已发布到 npm（当前版本见上方徽章）。npm 包不需要构建授权，装的就是仓库里已构建好的 `lib/client.js`。
+> 想跟进最新提交、还没发版的改动时，用下面的 GitHub 方式安装。
 
 ### 方式二：从 GitHub 安装（备用）
 
@@ -42,7 +45,7 @@ github:Kdnoesr/maid-companions#main
 ### 方式三：本地开发
 
 ```bash
-git clone https://github.com/kdnoesr/maid-companions.git
+git clone https://github.com/Kdnoesr/maid-companions.git
 dsh plugin --profile desktop add link:/path/to/maid-companions
 ```
 
