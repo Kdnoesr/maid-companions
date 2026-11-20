@@ -6,13 +6,13 @@
 - **纯客户端插件**，不改动 DSH 本体、不写任何数据、不发任何网络请求
 - **只在插件启用时生效**；在「设置 → 通用」里关闭开关，界面**完全恢复原版**
 - 立绘亮度恒定，不随会话激活或暗色主题衰减
-- 兼容 DSH Desktop **0.2.x**（`dsh.engines.dsh` 声明为 `>=0.2.0-rc.2`）
+- 兼容 DSH Desktop **0.2.x**（`engines.dsh` 声明为 `>=0.2.0-rc.2 <0.3.0`）
 
 ---
 
 ## 安装
 
-### 方式一：从 npm 安装（预留，尚未发布）
+### 方式一：从 npm 安装（推荐）
 
 在 DSH 侧栏「插件」→「添加插件」里填入包名：
 
@@ -26,15 +26,18 @@
 dsh plugin --profile desktop add '@kdnoesr/maid-companions'
 ```
 
-> 该包名目前**尚未发布到 npm**，现在请用下面的 GitHub 方式安装。
+> npm 包不需要构建授权，装的就是仓库里已构建好的 `lib/client.js`。
+> 如果 npm 上还没有这个版本，请用下面的 GitHub 方式安装。
 
-### 方式二：从 GitHub 安装（当前推荐）
+### 方式二：从 GitHub 安装（备用）
 
 在同一个「添加插件」框里填入（只填地址，不加 `dsh plugin add`）：
 
 ```text
-github:kdnoesr/maid-companions#main
+github:Kdnoesr/maid-companions#main
 ```
+
+> 仓库里已经提交了构建好的 `lib/client.js`，所以从 GitHub 装也不需要构建授权。
 
 ### 方式三：本地开发
 

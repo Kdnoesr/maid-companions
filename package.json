@@ -5,6 +5,15 @@
   "type": "module",
   "main": "./lib/index.js",
   "license": "BSD-3-Clause",
+  "author": "Kdnoesr",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kdnoesr/maid-companions.git"
+  },
+  "homepage": "https://github.com/Kdnoesr/maid-companions#readme",
+  "bugs": {
+    "url": "https://github.com/Kdnoesr/maid-companions/issues"
+  },
   "keywords": [
     "dsh-plugin",
     "deepseek-harness",
@@ -13,8 +22,12 @@
     "liquid-glass",
     "ui"
   ],
+  "engines": {
+    "dsh": ">=0.2.0-rc.2 <0.3.0"
+  },
   "files": [
-    "lib",
+    "lib/index.js",
+    "lib/client.js",
     "cordis.patch.yml",
     "README.md"
   ],
@@ -23,10 +36,10 @@
     "./client": "./lib/client.js",
     "./package.json": "./package.json"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "dsh": {
-    "engines": {
-      "dsh": ">=0.2.0-rc.2"
-    },
     "bundle": {
       "patch": "./cordis.patch.yml"
     },
