@@ -152,7 +152,7 @@ body[${OWNER_ATTR}] ${ROOT_SELECTOR} > [data-slot] > * > * {
 /* 底部「渐变/作曲区」锁定条（composerSeat，z-index:7, sticky bottom:0）的不透明
    渐变背景会盖住立绘脚部。用户要求修改渐变区域：把它的背景改为透明，让
    z-index:0 的立绘脚部从渐变区透出（composer 输入卡片本身是子元素，不受影响）。 */
-body[${GLASS_ATTR}] [data-composer-seat] {
+body:is([${OWNER_ATTR}], [${GLASS_ATTR}]) [data-composer-seat] {
 	background: transparent !important;
 }
 

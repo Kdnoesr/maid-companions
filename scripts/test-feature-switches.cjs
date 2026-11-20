@@ -44,3 +44,7 @@ test('feature switches independently mount and remove their effects', () => {
   ctx.enabledPref = true; enabledStore.notify();
   check(true, false, [1, 1]);
 });
+
+test('composer seat clears the footer gradient when either feature is active', () => {
+  assert.ok(source.includes('body:is([${OWNER_ATTR}], [${GLASS_ATTR}]) [data-composer-seat] {\n\tbackground: transparent !important;'));
+});

@@ -1,8 +1,8 @@
 {
   "schema": "maid-companions/client-parts@2",
   "target": "lib/client.js",
-  "targetBytes": 1136766,
-  "targetSha256": "78d2d9f191ea4079ff872c66c43a3eb4d292b6dd6e9197ad23cf42cd0c3f8275",
+  "targetBytes": 1136788,
+  "targetSha256": "5738d325882aad3ef797a0b70b8d07bd19a9f5c906028095f9df738cfc29fbd8",
   "note": "parts 顶部 //! 头注释由 assemble-client.mjs 剥除后再拼接；禁止手改 parts（资产走 inject-images.mjs）。目标漂移时用 scripts/split-client.mjs 按本表重建。",
   "parts": [
     {
@@ -69,10 +69,10 @@
         "//! 边界：结束于舞台底/对话区段末，下一块从 [data-composer-card] 开始。"
       ],
       "headerBytes": 479,
-      "payloadBytes": 22608,
-      "payloadSha256": "28d72438f98b9234e6a1d5601a6e53b35ae5e395568370c63e76300e412ae520",
+      "payloadBytes": 22630,
+      "payloadSha256": "89e91e0793905c06fdb4c05c27f7cdda2c7adf6dff044f782731cb84b5df6e70",
       "startByte": 923605,
-      "endByte": 946213
+      "endByte": 946235
     },
     {
       "file": "21-css-composer.js",
@@ -89,8 +89,8 @@
       "headerBytes": 410,
       "payloadBytes": 8060,
       "payloadSha256": "e65b65d06ac723911b5cd7aedb308acd0e2db5de8d88d38d0fec6d80090f1a3c",
-      "startByte": 946213,
-      "endByte": 954273
+      "startByte": 946235,
+      "endByte": 954295
     },
     {
       "file": "22-css-floating.js",
@@ -107,8 +107,8 @@
       "headerBytes": 474,
       "payloadBytes": 28689,
       "payloadSha256": "c2c5f95d5162ed91b7f860a9761a735d9b036c7566178d0ec82d2af5a14ddb9c",
-      "startByte": 954273,
-      "endByte": 982962
+      "startByte": 954295,
+      "endByte": 982984
     },
     {
       "file": "23-css-controls.js",
@@ -124,8 +124,8 @@
       "headerBytes": 372,
       "payloadBytes": 13629,
       "payloadSha256": "a0c9fe124b3f3b29c472e9e5c4ba5292c4823b23fdfd53d743b382a8172f45a4",
-      "startByte": 982962,
-      "endByte": 996591
+      "startByte": 982984,
+      "endByte": 996613
     },
     {
       "file": "24-css-tokens-legacy.js",
@@ -141,8 +141,8 @@
       "headerBytes": 392,
       "payloadBytes": 10598,
       "payloadSha256": "897e7f663052ca23c72cdeda0fac7b9f637bd9fdf13e06e1d545329b361240d4",
-      "startByte": 996591,
-      "endByte": 1007189
+      "startByte": 996613,
+      "endByte": 1007211
     },
     {
       "file": "30-settings-stage.js",
@@ -159,8 +159,8 @@
       "headerBytes": 401,
       "payloadBytes": 9954,
       "payloadSha256": "b3d9049591653c433d629753d7b1a356140fb1f10aedfae10fab15227445d141",
-      "startByte": 1007189,
-      "endByte": 1017143
+      "startByte": 1007211,
+      "endByte": 1017165
     },
     {
       "file": "31-material-constants.js",
@@ -178,8 +178,8 @@
       "headerBytes": 519,
       "payloadBytes": 15245,
       "payloadSha256": "1c8758da658d8b4486755d884e4f60dd4e0275109389812f3494e7a57dac56b6",
-      "startByte": 1017143,
-      "endByte": 1032388
+      "startByte": 1017165,
+      "endByte": 1032410
     },
     {
       "file": "32-material-engine-core.js",
@@ -199,8 +199,8 @@
       "headerBytes": 760,
       "payloadBytes": 54130,
       "payloadSha256": "6188daa5a6aa257e5debc33bd4cbc819b79eeebcf265a8d31ddd91e70824cdc1",
-      "startByte": 1032388,
-      "endByte": 1086518
+      "startByte": 1032410,
+      "endByte": 1086540
     },
     {
       "file": "33-engine-rim-apply.js",
@@ -215,8 +215,8 @@
       "headerBytes": 170,
       "payloadBytes": 24931,
       "payloadSha256": "832620b5ba8eae9f33481c140f585ff17025446206f855fa51ea2d86e60ef288",
-      "startByte": 1086518,
-      "endByte": 1111449
+      "startByte": 1086540,
+      "endByte": 1111471
     },
     {
       "file": "34-engine-observers.js",
@@ -229,8 +229,8 @@
       "headerBytes": 194,
       "payloadBytes": 6080,
       "payloadSha256": "3e9386eba57805649ebb191ec42c8c7b7758a5b1f6c1b3a045f1bc463f0c494b",
-      "startByte": 1111449,
-      "endByte": 1117529,
+      "startByte": 1111471,
+      "endByte": 1117551,
       "startLine": 2935,
       "endLine": 3073
     },
@@ -249,8 +249,8 @@
       "headerBytes": 440,
       "payloadBytes": 2647,
       "payloadSha256": "cbe7184643c0f0a14462babb559f58e047d7813111a5223a1bd29436a2674577",
-      "startByte": 1117529,
-      "endByte": 1120176
+      "startByte": 1117551,
+      "endByte": 1120198
     },
     {
       "file": "90-dev-harness.js",
@@ -266,8 +266,8 @@
       "headerBytes": 352,
       "payloadBytes": 16590,
       "payloadSha256": "6b9c6c23c77917922e58a1ff805edb0f17c40eea005b140576f4cc4dffb62b8a",
-      "startByte": 1120176,
-      "endByte": 1136766
+      "startByte": 1120198,
+      "endByte": 1136788
     }
   ],
   "partsHash": "12a15b84a889db15721f46e8a9d373e32337e3f903bd4d68bccc7fc4058e0149"
