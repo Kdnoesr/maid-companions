@@ -69,3 +69,19 @@ test('physical glass bends inward and reflects more at the illuminated edge', ()
     previous = sample;
   }
 });
+
+test('shared reflection preserves a single displacement primitive', () => {
+  const start = source.indexOf('const appendReflection =');
+  const end = source.indexOf('const installRim =', start);
+  const node = name => ({ name, attrs: {}, setAttribute(key, value) { this.attrs[key] = value; } });
+  const appendReflection = vm.runInNewContext(source.slice(start, end) + '\nappendReflection;', {
+    SVGNS: 'http://www.w3.org/2000/svg',
+    document: { createElementNS: (_, name) => node(name) },
+  });
+  const displacement = node('feDisplacementMap');
+  const children = [node('feImage'), displacement];
+  const reflections = appendReflection({ append: (...nodes) => children.push(...nodes) }, displacement);
+  assert.deepEqual(children.map(child => child.name), ['feImage', 'feDisplacementMap', 'feColorMatrix', 'feComposite']);
+  assert.equal(displacement.attrs.result, reflections[1].attrs.in2);
+  assert.equal(reflections[1].attrs.operator, 'atop');
+});

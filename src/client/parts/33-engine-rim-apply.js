@@ -168,7 +168,6 @@
 				dropLayer(inst, "rimLayer");
 				try { if (inst.el) inst.el.removeAttribute("data-mc-glass-layered"); } catch { /* 忽略 */ }
 			};
-			const RIM_LIGHT = "inset 0.65px 0.85px 1px -0.25px rgb(255 255 255 / 0.35), inset -0.65px -0.85px 1px -0.35px rgb(255 255 255 / 0.15), inset 0 -2px 4px -3px rgb(0 0 0 / 0.34)";
 			const applyTo = (el, inst) => {
 				try {
 					const modernMenu = el.getAttribute("data-menu-material") === "translucent";
@@ -266,7 +265,7 @@
 					//   的源头：同一个输入框在不同窗口宽度下折射强度差 2×。统一到 10 后，
 					//   默认布局只差 −3%（不可见），窄布局收回 2× 过冲，全站同一强度。
 					const dTargetEff = Math.min(MAT.dispTarget, 0.4545 * bezel);
-					const usePhysicalGlass = (isComposer || isFloat) && !el.hasAttribute("data-message-bubble") && LIQUID.dispersion === 0;
+					const usePhysicalGlass = !el.hasAttribute("data-message-bubble") && LIQUID.dispersion === 0;
 					const profile = usePhysicalGlass ? "physical" : null;
 					const map = buildMap(w, h, radius, bezel, null, 1, profile, usePhysicalGlass || dTargetEff >= 2 ? dTargetEff : 0);
 					if (map === null) {
@@ -282,18 +281,7 @@
 					inst.feImage.setAttribute("height", String(h));
 					inst.feImage.setAttribute("href", map.url);
 					if (usePhysicalGlass && !inst.reflection) {
-						inst.disps.g.setAttribute("result", "transmitted");
-						const light = document.createElementNS(SVGNS, "feColorMatrix");
-						light.setAttribute("in", "map");
-						light.setAttribute("type", "matrix");
-						light.setAttribute("values", "0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 1 0 0");
-						light.setAttribute("result", "reflectedLight");
-						const composite = document.createElementNS(SVGNS, "feComposite");
-						composite.setAttribute("in", "reflectedLight");
-						composite.setAttribute("in2", "transmitted");
-						composite.setAttribute("operator", "atop");
-						inst.filter.append(light, composite);
-						inst.reflection = [light, composite];
+						inst.reflection = appendReflection(inst.filter, inst.disps.g);
 					} else if (!usePhysicalGlass && inst.reflection) {
 						for (const node of inst.reflection) node.remove();
 						inst.reflection = null;

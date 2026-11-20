@@ -642,6 +642,23 @@
 				}
 				inst.cards.clear();
 			};
+			// The upper edge catches the key light, the lower edge catches a softer fill.
+			// Dark sidewalls deepen the profile without drawing a white outline.
+			const RIM_LIGHT = "inset 0 1px 1.25px -0.35px rgb(255 255 255 / 0.37), inset 0 -0.85px 1px -0.35px rgb(255 255 255 / 0.20), inset 1.35px 0 1.3px -0.55px rgb(0 0 0 / 0.24), inset -1.35px 0 1.3px -0.55px rgb(0 0 0 / 0.24)";
+			const appendReflection = (filter, displacement) => {
+				displacement.setAttribute("result", "transmitted");
+				const light = document.createElementNS(SVGNS, "feColorMatrix");
+				light.setAttribute("in", "map");
+				light.setAttribute("type", "matrix");
+				light.setAttribute("values", "0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 1 0 0");
+				light.setAttribute("result", "reflectedLight");
+				const composite = document.createElementNS(SVGNS, "feComposite");
+				composite.setAttribute("in", "reflectedLight");
+				composite.setAttribute("in2", "transmitted");
+				composite.setAttribute("operator", "atop");
+				filter.append(light, composite);
+				return [light, composite];
+			};
 			const installRim = (el, inst, w, h) => {
 				try {
 					const cs = getComputedStyle(el);
@@ -683,7 +700,7 @@
 				// 小面板会被拉到 16 以内，避免"整块内容被拽动"）
 				// v0.11.0：补上 0.4545·bezel 钳制（原来只有 applyTo 里有，veil 没钳制）。
 				// 斜率 |d'|max = 1.98·D/B，D>0.505B 就折返 ⇒ 窄带必须同步降峰值。
-				const map = buildMap(W, H, radius, GP.bezelPx, null, 1, null, Math.min(MAT.dispTarget, 0.4545 * GP.bezelPx));
+					const map = buildMap(W, H, radius, GP.bezelPx, null, 1, "physical", Math.min(MAT.dispTarget, 0.4545 * GP.bezelPx));
 					if (!map) throw new Error("Glass veil map unavailable");
 					if (!inst.veilFilter) {
 						const vf = document.createElementNS(SVGNS, "filter");
@@ -699,6 +716,7 @@
 						dm.setAttribute("xChannelSelector", "R");
 						dm.setAttribute("yChannelSelector", "G");
 						vf.append(fi, dm);
+						appendReflection(vf, dm);
 						inst.svg.appendChild(vf);
 						inst.veilFilter = vf; inst.veilFeImage = fi; inst.veilDisp = dm;
 					}
@@ -706,7 +724,7 @@
 					veil.style.cssText =
 						"position:absolute;pointer-events:none;z-index:0;box-sizing:border-box;" +
 						"left:" + ox2 + "px;top:" + oy2 + "px;" +
-						"width:" + W + "px;height:" + H + "px;border-radius:" + radius + "px;background:transparent;" +
+						"width:" + W + "px;height:" + H + "px;border-radius:" + radius + "px;background:transparent;box-shadow:" + RIM_LIGHT + ";" +
 						"-webkit-backdrop-filter:" + vb + ";backdrop-filter:" + vb + ";";
 					// v0.12.0：veil 只负责"清边"（bf 现在与输入框同参 blur 1 + 位移），
 					// 雾面与体色交给它的 ::after 羽化磨砂芯。参数按盒子尺寸递过去，
