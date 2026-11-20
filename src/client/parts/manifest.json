@@ -1,8 +1,8 @@
 {
   "schema": "maid-companions/client-parts@2",
   "target": "lib/client.js",
-  "targetBytes": 1140523,
-  "targetSha256": "da58606771b6018537fda52b031c0724c227403013fe093c1815ac8c3599d826",
+  "targetBytes": 1139230,
+  "targetSha256": "61ccf03700ed74ec54c381682873007bf8c77e9cb01078ec858f11c461482268",
   "note": "parts 顶部 //! 头注释由 assemble-client.mjs 剥除后再拼接；禁止手改 parts（资产走 inject-images.mjs）。目标漂移时用 scripts/split-client.mjs 按本表重建。",
   "parts": [
     {
@@ -184,7 +184,7 @@
     {
       "file": "32-material-engine-core.js",
       "startLine": 1699,
-      "endLine": 2594,
+      "endLine": 2592,
       "asset": false,
       "header": [
         "//! 32-material-engine-core：createLiquidGlass 闭包前半 —— 数学、贴图、生命周期。",
@@ -197,15 +197,15 @@
         "//!       function createLiquidGlass() {，本轮不做语义重构（TODO 见 parts/README.md）。"
       ],
       "headerBytes": 760,
-      "payloadBytes": 56563,
-      "payloadSha256": "9bb8e03caf4b4712a4c277e51bd2dddb39532248c57bce1f42bcf17c1ae37157",
+      "payloadBytes": 56586,
+      "payloadSha256": "26f30de3adfb7d4ed7bdfb5654b00ff7cf2c459ef3549e7f7bddcc944e3df3fc",
       "startByte": 1032410,
-      "endByte": 1088973
+      "endByte": 1088996
     },
     {
       "file": "33-engine-rim-apply.js",
-      "startLine": 2595,
-      "endLine": 2996,
+      "startLine": 2593,
+      "endLine": 2969,
       "asset": false,
       "header": [
         "//! Per-element liquid glass material application.",
@@ -213,10 +213,10 @@
         "//! Shares the createLiquidGlass closure with part 34."
       ],
       "headerBytes": 170,
-      "payloadBytes": 26233,
-      "payloadSha256": "d05f7b6e595261758e12cd73bbe7ef043c7e4663d6d67c562eaf1cdc750491bd",
-      "startByte": 1088973,
-      "endByte": 1115206
+      "payloadBytes": 24917,
+      "payloadSha256": "24759f29081787dae442fce4de2560a2228b0c63ad36f78eaaf2ab93b79a3bea",
+      "startByte": 1088996,
+      "endByte": 1113913
     },
     {
       "file": "34-engine-observers.js",
@@ -229,15 +229,15 @@
       "headerBytes": 194,
       "payloadBytes": 6080,
       "payloadSha256": "3e9386eba57805649ebb191ec42c8c7b7758a5b1f6c1b3a045f1bc463f0c494b",
-      "startByte": 1115206,
-      "endByte": 1121286,
-      "startLine": 2997,
-      "endLine": 3135
+      "startByte": 1113913,
+      "endByte": 1119993,
+      "startLine": 2970,
+      "endLine": 3108
     },
     {
       "file": "40-lifecycle-exports.js",
-      "startLine": 3136,
-      "endLine": 3192,
+      "startLine": 3109,
+      "endLine": 3165,
       "asset": false,
       "header": [
         "//! 40-lifecycle-exports：插件生命周期入口与 exports 赋值。",
@@ -249,13 +249,13 @@
       "headerBytes": 440,
       "payloadBytes": 2647,
       "payloadSha256": "cbe7184643c0f0a14462babb559f58e047d7813111a5223a1bd29436a2674577",
-      "startByte": 1121286,
-      "endByte": 1123933
+      "startByte": 1119993,
+      "endByte": 1122640
     },
     {
       "file": "90-dev-harness.js",
-      "startLine": 3193,
-      "endLine": 3520,
+      "startLine": 3166,
+      "endLine": 3493,
       "asset": false,
       "header": [
         "//! 90-dev-harness：本地调试 harness（LG27-HARNESS-BEGIN/END 包裹）。",
@@ -266,8 +266,8 @@
       "headerBytes": 352,
       "payloadBytes": 16590,
       "payloadSha256": "6b9c6c23c77917922e58a1ff805edb0f17c40eea005b140576f4cc4dffb62b8a",
-      "startByte": 1123933,
-      "endByte": 1140523
+      "startByte": 1122640,
+      "endByte": 1139230
     }
   ],
   "partsHash": "12a15b84a889db15721f46e8a9d373e32337e3f903bd4d68bccc7fc4058e0149"

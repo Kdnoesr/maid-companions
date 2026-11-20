@@ -438,7 +438,53 @@
 				delete records[prop];
 			};
 
-			/** 为一个元素建一套 SVG 滤镜。色散关闭时只建最简的一条（省掉两次采样与三次合成）。 */
+			const opticalPrimitive = (tag, attributes) => {
+				const node = document.createElementNS(SVGNS, tag);
+				for (const [name, value] of Object.entries(attributes)) node.setAttribute(name, String(value));
+				return node;
+			};
+			// One map for all surfaces. Only foreground glass gets the two extra color samples.
+			const updateOpticalFilter = (filter, displacement, scale, spectrum) => {
+				const mode = spectrum && scale >= 4 ? "spectrum" : "single";
+				displacement.setAttribute("scale", String(scale));
+				if (displacement.__mcOptics?.mode !== mode) {
+					for (const node of displacement.__mcOptics?.nodes || []) node.remove();
+					const nodes = [];
+					const append = (tag, attributes) => {
+						const node = opticalPrimitive(tag, attributes);
+						nodes.push(node);
+						return node;
+					};
+					displacement.setAttribute("result", mode === "spectrum" ? "greenRay" : "transmitted");
+					let red, blue;
+					if (mode === "spectrum") {
+						const ray = (result) => append("feDisplacementMap", { in: "SourceGraphic", in2: "map", xChannelSelector: "R", yChannelSelector: "G", result });
+						red = ray("redRay");
+						blue = ray("blueRay");
+						for (const [index, color] of ["red", "green", "blue"].entries()) {
+							const values = Array(20).fill(0);
+							values[index * 6] = values[18] = 1;
+							append("feColorMatrix", { in: color + "Ray", type: "matrix", values: values.join(" "), result: color });
+						}
+						append("feBlend", { in: "red", in2: "green", mode: "screen", result: "rg" });
+						append("feBlend", { in: "rg", in2: "blue", mode: "screen", result: "transmitted" });
+					}
+					append("feColorMatrix", { in: "map", type: "matrix", values: "0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 1 0 0", result: "reflectedLight" });
+					append("feComposite", { in: "reflectedLight", in2: "transmitted", operator: "atop" });
+					filter.append(...nodes);
+					displacement.__mcOptics = { mode, nodes, red, blue };
+				}
+				const { red, blue } = displacement.__mcOptics;
+				if (red && blue) {
+					// Normal dispersion: shorter wavelengths bend more. The visible fringe
+					// scales with local displacement and stays below one CSS pixel.
+					const split = Math.min(0.9, scale * 0.055);
+					red.setAttribute("scale", String(scale - split));
+					blue.setAttribute("scale", String(scale + split));
+				}
+			};
+
+			/** Build the shared SVG filter for a glass surface. */
 			const mount = (el) => {
 				const id = LIQUID_FILTER_ID + "-" + (uid++);
 				const svg = document.createElementNS(SVGNS, "svg");
@@ -454,57 +500,9 @@
 				const feImage = document.createElementNS(SVGNS, "feImage");
 				feImage.setAttribute("result", "map");
 				feImage.setAttribute("preserveAspectRatio", "none");
-				const mkDisp = (result) => {
-					const d = document.createElementNS(SVGNS, "feDisplacementMap");
-					d.setAttribute("in", "SourceGraphic");
-					d.setAttribute("in2", "map");
-					d.setAttribute("xChannelSelector", "R");
-					d.setAttribute("yChannelSelector", "G");
-					if (result !== undefined) d.setAttribute("result", result);
-					return d;
-				};
-				let disps = null;
-				if (LIQUID.dispersion > 0) {
-					// ── 色散（chromatic aberration）──────────────────────────────
-					// 物理：不同色光折射率不同 → R/B 位移相反，边缘分光（教程原码）：
-					//   rC = tex(baseUV + offsetUV*d); bC = tex(baseUV - offsetUV*d)
-					// 实现：同一张贴图做三次 feDisplacementMap（scale 不同），
-					//       再用 feColorMatrix 各取一通道，最后 feBlend screen 相加。
-					// 已实测：黑白背景下"卡内通道差≥25 的像素"从 0 → 426（分光确实发生）。
-					const CHANNEL_MATRIX = [
-						"1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0", // 只留 R
-						"0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0", // 只留 G
-						"0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0", // 只留 B
-					];
-					const keepChannel = (input, ch, result) => {
-						const m = document.createElementNS(SVGNS, "feColorMatrix");
-						m.setAttribute("in", input);
-						m.setAttribute("type", "matrix");
-						m.setAttribute("values", CHANNEL_MATRIX[ch]);
-						m.setAttribute("result", result);
-						return m;
-					};
-					const dG = mkDisp("dispG"), dR = mkDisp("dispR"), dB = mkDisp("dispB");
-					const mR = keepChannel("dispR", 0, "onlyR");
-					const mG = keepChannel("dispG", 1, "onlyG");
-					const mB = keepChannel("dispB", 2, "onlyB");
-					const bRG = document.createElementNS(SVGNS, "feBlend");
-					bRG.setAttribute("in", "onlyR");
-					bRG.setAttribute("in2", "onlyG");
-					bRG.setAttribute("mode", "screen");   // 通道互不重叠 → 等价相加且不过曝
-					bRG.setAttribute("result", "rg");
-					const bB = document.createElementNS(SVGNS, "feBlend");
-					bB.setAttribute("in", "rg");
-					bB.setAttribute("in2", "onlyB");
-					bB.setAttribute("mode", "screen");
-					filter.append(feImage, dG, dR, dB, mR, mG, mB, bRG, bB);
-					disps = { g: dG, r: dR, b: dB };
-				} else {
-					// 无色散：只要一次位移，成本约为三分支版的 1/3
-					const dG = mkDisp();
-					filter.append(feImage, dG);
-					disps = { g: dG, r: null, b: null };
-				}
+				const transmission = opticalPrimitive("feDisplacementMap", { in: "SourceGraphic", in2: "map", xChannelSelector: "R", yChannelSelector: "G" });
+				filter.append(feImage, transmission);
+				const disps = { g: transmission };
 				svg.appendChild(filter);
 				document.body.appendChild(svg);
 				const inst = { svg, filter, feImage, disps, id, el, ring: null, ringFilters: null, mirrors: null, ringTouchedPos: false, rimTouchedIso: false, rimRaised: null, styles: {} };
@@ -683,7 +681,7 @@
 				// 小面板会被拉到 16 以内，避免"整块内容被拽动"）
 				// v0.11.0：补上 0.4545·bezel 钳制（原来只有 applyTo 里有，veil 没钳制）。
 				// 斜率 |d'|max = 1.98·D/B，D>0.505B 就折返 ⇒ 窄带必须同步降峰值。
-				const map = buildMap(W, H, radius, GP.bezelPx, null, 1, null, Math.min(MAT.dispTarget, 0.4545 * GP.bezelPx));
+				const map = buildMap(W, H, radius, GP.bezelPx, null, 1, "physical", Math.min(MAT.dispTarget, 0.4545 * GP.bezelPx));
 					if (!map) throw new Error("Glass veil map unavailable");
 					if (!inst.veilFilter) {
 						const vf = document.createElementNS(SVGNS, "filter");
@@ -729,7 +727,7 @@
 						inst.veilFeImage.setAttribute("height", String(H));
 						inst.veilFeImage.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", map.url);
 						inst.veilFeImage.setAttribute("href", map.url);
-						inst.veilDisp.setAttribute("scale", String(map.scale));
+						updateOpticalFilter(inst.veilFilter, inst.veilDisp, map.scale, false);
 					}
 					
 					// ── 侧栏分隔玻璃（保持原样：极淡冷色渐变，给 nav / content 一个分界）──

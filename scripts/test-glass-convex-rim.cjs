@@ -69,3 +69,25 @@ test('physical glass bends inward and reflects more at the illuminated edge', ()
     previous = sample;
   }
 });
+
+test('spectral mode bounds fringe, retains reflection and switches back to one sample', () => {
+  const makeNode = () => ({ attributes: {}, setAttribute(k, v) { this.attributes[k] = v; }, remove() { this.removed = true; } });
+  const from = source.indexOf('const opticalPrimitive =');
+  const to = source.indexOf('const mount =', from);
+  const update = vm.runInNewContext(source.slice(from, to) + '\nupdateOpticalFilter;', {
+    SVGNS: 'svg', document: { createElementNS(_, tag) { return Object.assign(makeNode(), { tag }); } },
+  });
+  const filter = { added: [], append(...nodes) { this.added.push(...nodes); } };
+  const green = makeNode();
+  update(filter, green, 12, true);
+  const { red, blue, nodes } = green.__mcOptics;
+  assert.ok(+red.attributes.scale < 12 && +blue.attributes.scale > 12);
+  assert.ok((blue.attributes.scale - red.attributes.scale) / 2 <= 0.900001);
+  assert.equal(nodes.at(-1).attributes.in2, 'transmitted');
+  update(filter, green, 10, true);
+  assert.equal(green.__mcOptics.nodes, nodes);
+  update(filter, green, 10, false);
+  assert.ok(nodes.every(node => node.removed));
+  assert.equal(green.attributes.result, 'transmitted');
+  assert.deepEqual(Array.from(green.__mcOptics.nodes, node => node.tag), ['feColorMatrix', 'feComposite']);
+});

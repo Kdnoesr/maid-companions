@@ -266,9 +266,9 @@
 					//   的源头：同一个输入框在不同窗口宽度下折射强度差 2×。统一到 10 后，
 					//   默认布局只差 −3%（不可见），窄布局收回 2× 过冲，全站同一强度。
 					const dTargetEff = Math.min(MAT.dispTarget, 0.4545 * bezel);
-					const usePhysicalGlass = (isComposer || isFloat) && !el.hasAttribute("data-message-bubble") && LIQUID.dispersion === 0;
-					const profile = usePhysicalGlass ? "physical" : null;
-					const map = buildMap(w, h, radius, bezel, null, 1, profile, usePhysicalGlass || dTargetEff >= 2 ? dTargetEff : 0);
+					const isBubble = el.hasAttribute("data-message-bubble");
+					const useSpectrum = !isBubble && w * h <= LIQUID_RING_MIN_AREA;
+					const map = buildMap(w, h, radius, bezel, null, 1, "physical", dTargetEff);
 					if (map === null) {
 						resetModern();
 						if (!modernMenu) { restoreStyle(inst.styles, el, "backdrop-filter"); restoreStyle(inst.styles, el, "-webkit-backdrop-filter"); }
@@ -281,32 +281,7 @@
 					inst.feImage.setAttribute("width", String(w));
 					inst.feImage.setAttribute("height", String(h));
 					inst.feImage.setAttribute("href", map.url);
-					if (usePhysicalGlass && !inst.reflection) {
-						inst.disps.g.setAttribute("result", "transmitted");
-						const light = document.createElementNS(SVGNS, "feColorMatrix");
-						light.setAttribute("in", "map");
-						light.setAttribute("type", "matrix");
-						light.setAttribute("values", "0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 1 0 0");
-						light.setAttribute("result", "reflectedLight");
-						const composite = document.createElementNS(SVGNS, "feComposite");
-						composite.setAttribute("in", "reflectedLight");
-						composite.setAttribute("in2", "transmitted");
-						composite.setAttribute("operator", "atop");
-						inst.filter.append(light, composite);
-						inst.reflection = [light, composite];
-					} else if (!usePhysicalGlass && inst.reflection) {
-						for (const node of inst.reflection) node.remove();
-						inst.reflection = null;
-						inst.disps.g.removeAttribute("result");
-					}
-					const d = LIQUID.dispersion, s = map.scale;
-					if (inst.disps.r !== null && inst.disps.b !== null && d > 0) {
-						inst.disps.g.setAttribute("scale", s.toFixed(2));
-						inst.disps.r.setAttribute("scale", (s * (1 + d)).toFixed(2));
-						inst.disps.b.setAttribute("scale", (s * (1 - d)).toFixed(2));
-					} else {
-						inst.disps.g.setAttribute("scale", s.toFixed(2));
-					}
+					updateOpticalFilter(inst.filter, inst.disps.g, map.scale, useSpectrum);
 					const value = "url(#" + inst.id + ") blur(" + GP.blurPx + "px) saturate(" + GP.saturate + ") brightness(" + GP.brightness + ")";
 					// ⚠️ 走到这里说明是「小浮层 / 输入框」：先清掉可能残留的环带与内联底色，
 					//    再挂 backdrop-filter。两者互斥 —— 同时存在时 backdrop 会采到
@@ -378,7 +353,7 @@
 						} catch { /* 忽略 */ }
 						const rim = ensureLayer(el, inst, "rimLayer", "data-mc-glass-rim", null, radius);
 						const rimSt = layerStyles(inst, "rimLayer");
-						if (usePhysicalGlass) writeStyle(rimSt, rim, "box-shadow", RIM_LIGHT, "important");
+						if (!isBubble) writeStyle(rimSt, rim, "box-shadow", RIM_LIGHT, "important");
 						else restoreStyle(rimSt, rim, "box-shadow");
 						writeStyle(rimSt, rim, "backdrop-filter", value, "important");
 						writeStyle(rimSt, rim, "-webkit-backdrop-filter", value, "important");
