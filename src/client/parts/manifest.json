@@ -1,8 +1,8 @@
 {
   "schema": "maid-companions/client-parts@2",
   "target": "lib/client.js",
-  "targetBytes": 1140936,
-  "targetSha256": "5f4451afb7a1f18fd0e3e1c7a2cdb6c51778a7008800047550f240a029f00932",
+  "targetBytes": 1137627,
+  "targetSha256": "161c102bfbad3405ed6e36f7c879aef510a92bf536ff9457795ca3bacd8e27b8",
   "note": "parts 顶部 //! 头注释由 assemble-client.mjs 剥除后再拼接；禁止手改 parts（资产走 inject-images.mjs）。目标漂移时用 scripts/split-client.mjs 按本表重建。",
   "parts": [
     {
@@ -77,7 +77,7 @@
     {
       "file": "21-css-composer.js",
       "startLine": 472,
-      "endLine": 579,
+      "endLine": 597,
       "asset": false,
       "header": [
         "//! 21-css-composer：STAGE_CSS 第 2 块 —— 输入框（composer）区域样式。",
@@ -87,15 +87,15 @@
         "//!       本块只负责几何，不要在 CSS 里另加玻璃。"
       ],
       "headerBytes": 410,
-      "payloadBytes": 8060,
-      "payloadSha256": "e65b65d06ac723911b5cd7aedb308acd0e2db5de8d88d38d0fec6d80090f1a3c",
+      "payloadBytes": 8761,
+      "payloadSha256": "e0280dc484dec8f2ad93c295fede7d99a57ed704c38b8c5edcf32ec8ad1d3e34",
       "startByte": 946235,
-      "endByte": 954295
+      "endByte": 954996
     },
     {
       "file": "22-css-floating.js",
-      "startLine": 580,
-      "endLine": 988,
+      "startLine": 598,
+      "endLine": 1006,
       "asset": false,
       "header": [
         "//! 22-css-floating：STAGE_CSS 第 3 块 —— 浮层/菜单/弹窗/气泡/面板样式。",
@@ -107,13 +107,13 @@
       "headerBytes": 474,
       "payloadBytes": 28689,
       "payloadSha256": "c2c5f95d5162ed91b7f860a9761a735d9b036c7566178d0ec82d2af5a14ddb9c",
-      "startByte": 954295,
-      "endByte": 982984
+      "startByte": 954996,
+      "endByte": 983685
     },
     {
       "file": "23-css-controls.js",
-      "startLine": 989,
-      "endLine": 1200,
+      "startLine": 1007,
+      "endLine": 1218,
       "asset": false,
       "header": [
         "//! 23-css-controls：STAGE_CSS 第 4 块 —— v0.4.9 玻璃面控件材质。",
@@ -124,13 +124,13 @@
       "headerBytes": 372,
       "payloadBytes": 13629,
       "payloadSha256": "a0c9fe124b3f3b29c472e9e5c4ba5292c4823b23fdfd53d743b382a8172f45a4",
-      "startByte": 982984,
-      "endByte": 996613
+      "startByte": 983685,
+      "endByte": 997314
     },
     {
       "file": "24-css-tokens-legacy.js",
-      "startLine": 1201,
-      "endLine": 1354,
+      "startLine": 1219,
+      "endLine": 1372,
       "asset": false,
       "header": [
         "//! 24-css-tokens-legacy：STAGE_CSS 第 5 块 —— 静音规则、页面级玻璃、模板收尾。",
@@ -141,13 +141,13 @@
       "headerBytes": 392,
       "payloadBytes": 10598,
       "payloadSha256": "897e7f663052ca23c72cdeda0fac7b9f637bd9fdf13e06e1d545329b361240d4",
-      "startByte": 996613,
-      "endByte": 1007211
+      "startByte": 997314,
+      "endByte": 1007912
     },
     {
       "file": "30-settings-stage.js",
-      "startLine": 1355,
-      "endLine": 1524,
+      "startLine": 1373,
+      "endLine": 1542,
       "asset": false,
       "header": [
         "//! 30-settings-stage：STAGE_CSS 收尾 + 设置面板 + 启用状态存储 + 舞台创建。",
@@ -159,13 +159,13 @@
       "headerBytes": 401,
       "payloadBytes": 9954,
       "payloadSha256": "b3d9049591653c433d629753d7b1a356140fb1f10aedfae10fab15227445d141",
-      "startByte": 1007211,
-      "endByte": 1017165
+      "startByte": 1007912,
+      "endByte": 1017866
     },
     {
       "file": "31-material-constants.js",
-      "startLine": 1525,
-      "endLine": 1698,
+      "startLine": 1543,
+      "endLine": 1716,
       "asset": false,
       "header": [
         "//! 31-material-constants：玻璃材质参数表（唯一调参入口）。",
@@ -178,13 +178,13 @@
       "headerBytes": 519,
       "payloadBytes": 15245,
       "payloadSha256": "1c8758da658d8b4486755d884e4f60dd4e0275109389812f3494e7a57dac56b6",
-      "startByte": 1017165,
-      "endByte": 1032410
+      "startByte": 1017866,
+      "endByte": 1033111
     },
     {
       "file": "32-material-engine-core.js",
-      "startLine": 1699,
-      "endLine": 2612,
+      "startLine": 1717,
+      "endLine": 2573,
       "asset": false,
       "header": [
         "//! 32-material-engine-core：createLiquidGlass 闭包前半 —— 数学、贴图、生命周期。",
@@ -197,15 +197,15 @@
         "//!       function createLiquidGlass() {，本轮不做语义重构（TODO 见 parts/README.md）。"
       ],
       "headerBytes": 760,
-      "payloadBytes": 57696,
-      "payloadSha256": "8e75a4d686243249e92f5d902ec581aa62ebaabf956b320f1a471fd36f0188b3",
-      "startByte": 1032410,
-      "endByte": 1090106
+      "payloadBytes": 54190,
+      "payloadSha256": "7fb04cdef528e7dfd366c0c87c8bbd5fa52da7351f5e998cf0bf226f520ce6f0",
+      "startByte": 1033111,
+      "endByte": 1087301
     },
     {
       "file": "33-engine-rim-apply.js",
-      "startLine": 2613,
-      "endLine": 3003,
+      "startLine": 2574,
+      "endLine": 2955,
       "asset": false,
       "header": [
         "//! Per-element liquid glass material application.",
@@ -213,10 +213,10 @@
         "//! Shares the createLiquidGlass closure with part 34."
       ],
       "headerBytes": 170,
-      "payloadBytes": 25513,
-      "payloadSha256": "e81c146ba636cd3b7ad883e47fe38d7b26e1fc0a9dc5dd911c76b0c427201448",
-      "startByte": 1090106,
-      "endByte": 1115619
+      "payloadBytes": 25009,
+      "payloadSha256": "d74abc87b6fa7da9b6b7ff50d364dffcc196f6e9fc4c0495d20085387d068d4e",
+      "startByte": 1087301,
+      "endByte": 1112310
     },
     {
       "file": "34-engine-observers.js",
@@ -229,15 +229,15 @@
       "headerBytes": 194,
       "payloadBytes": 6080,
       "payloadSha256": "3e9386eba57805649ebb191ec42c8c7b7758a5b1f6c1b3a045f1bc463f0c494b",
-      "startByte": 1115619,
-      "endByte": 1121699,
-      "startLine": 3004,
-      "endLine": 3142
+      "startByte": 1112310,
+      "endByte": 1118390,
+      "startLine": 2956,
+      "endLine": 3094
     },
     {
       "file": "40-lifecycle-exports.js",
-      "startLine": 3143,
-      "endLine": 3199,
+      "startLine": 3095,
+      "endLine": 3151,
       "asset": false,
       "header": [
         "//! 40-lifecycle-exports：插件生命周期入口与 exports 赋值。",
@@ -249,13 +249,13 @@
       "headerBytes": 440,
       "payloadBytes": 2647,
       "payloadSha256": "cbe7184643c0f0a14462babb559f58e047d7813111a5223a1bd29436a2674577",
-      "startByte": 1121699,
-      "endByte": 1124346
+      "startByte": 1118390,
+      "endByte": 1121037
     },
     {
       "file": "90-dev-harness.js",
-      "startLine": 3200,
-      "endLine": 3527,
+      "startLine": 3152,
+      "endLine": 3479,
       "asset": false,
       "header": [
         "//! 90-dev-harness：本地调试 harness（LG27-HARNESS-BEGIN/END 包裹）。",
@@ -266,8 +266,8 @@
       "headerBytes": 352,
       "payloadBytes": 16590,
       "payloadSha256": "6b9c6c23c77917922e58a1ff805edb0f17c40eea005b140576f4cc4dffb62b8a",
-      "startByte": 1124346,
-      "endByte": 1140936
+      "startByte": 1121037,
+      "endByte": 1137627
     }
   ],
   "partsHash": "12a15b84a889db15721f46e8a9d373e32337e3f903bd4d68bccc7fc4058e0149"

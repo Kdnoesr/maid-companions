@@ -80,6 +80,24 @@ body[${GLASS_ATTR}] [data-composer-card] {
 		inset 0 0 20px -5px rgba(212, 232, 255, 0.20);
 }
 
+/* The host renders its trigger menu inside the composer. Give the composer and
+   menu separate backdrop layers while the menu is present. */
+body[${GLASS_ATTR}] [data-composer-card]:has([data-composer-overlay] [data-trigger-menu]) {
+	isolation: isolate;
+	-webkit-backdrop-filter: none !important;
+	backdrop-filter: none !important;
+}
+body[${GLASS_ATTR}] [data-composer-card]:has([data-composer-overlay] [data-trigger-menu])::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	border-radius: inherit;
+	pointer-events: none;
+	-webkit-backdrop-filter: var(--mc-composer-filter, blur(1px) brightness(1.05));
+	backdrop-filter: var(--mc-composer-filter, blur(1px) brightness(1.05));
+}
+
 /* ═══ 浮层 / 气泡 / 窗口 · 与对话区同款「半透明 + 毛玻璃」════════════════════
    仅插件启用时生效（作用域 body[${GLASS_ATTR}]），关闭插件即整块失效。
 

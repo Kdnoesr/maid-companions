@@ -168,6 +168,7 @@
 				dropLayer(inst, "rimLayer");
 				try { if (inst.el) inst.el.removeAttribute("data-mc-glass-layered"); } catch { /* 忽略 */ }
 			};
+			const FROST_GLOW = "inset 0 0 17px -4.25px rgba(212,232,255,0.20)";
 			const applyTo = (el, inst) => {
 				try {
 					const modernMenu = el.getAttribute("data-menu-material") === "translucent";
@@ -266,9 +267,7 @@
 					//   的源头：同一个输入框在不同窗口宽度下折射强度差 2×。统一到 10 后，
 					//   默认布局只差 −3%（不可见），窄布局收回 2× 过冲，全站同一强度。
 					const dTargetEff = Math.min(MAT.dispTarget, 0.4545 * bezel);
-					const usePhysicalGlass = !el.hasAttribute("data-message-bubble") && LIQUID.dispersion === 0;
-					const profile = usePhysicalGlass ? "physical" : null;
-					const map = buildMap(w, h, radius, bezel, null, 1, profile, usePhysicalGlass || dTargetEff >= 2 ? dTargetEff : 0);
+					const map = buildMap(w, h, radius, bezel, null, 1, null, dTargetEff < 2 ? 0 : dTargetEff);
 					if (map === null) {
 						resetModern();
 						if (!modernMenu) { restoreStyle(inst.styles, el, "backdrop-filter"); restoreStyle(inst.styles, el, "-webkit-backdrop-filter"); }
@@ -281,13 +280,6 @@
 					inst.feImage.setAttribute("width", String(w));
 					inst.feImage.setAttribute("height", String(h));
 					inst.feImage.setAttribute("href", map.url);
-					if (usePhysicalGlass && !inst.reflection) {
-						inst.reflection = appendReflection(inst.filter, inst.disps.g);
-					} else if (!usePhysicalGlass && inst.reflection) {
-						for (const node of inst.reflection) node.remove();
-						inst.reflection = null;
-						inst.disps.g.removeAttribute("result");
-					}
 					const d = LIQUID.dispersion, s = map.scale;
 					if (inst.disps.r !== null && inst.disps.b !== null && d > 0) {
 						inst.disps.g.setAttribute("scale", s.toFixed(2));
@@ -322,8 +314,8 @@
 						//   菜单族结构 = root(_surface) + 子层(_material)，bf 只挂子层；
 						//   若内辉留在 root，视觉上会被子层遮住（等于没有），审计也会判"面缺内辉"。
 						writeStyle(inst.styles, el, "box-shadow", "0 0 0 0.5px var(--mc-hairline), var(--mc-shadow-float)", "important");
-						writeStyle(inst.materialStyles || (inst.materialStyles = {}), material, "box-shadow", RIM_LIGHT, "important");
-						if (!inst.material) { inst.material = material; if (ro !== null) ro.observe(material); }
+						if (!inst.material) { inst.material = material; inst.materialStyles = {}; if (ro !== null) ro.observe(material); }
+						writeStyle(inst.materialStyles, material, "box-shadow", FROST_GLOW, "important");
 						writeStyle(inst.styles, el, "backdrop-filter", "none", "important");
 						writeStyle(inst.styles, el, "-webkit-backdrop-filter", "none", "important");
 						writeStyle(inst.materialStyles, material, "backdrop-filter", value, "important");
@@ -344,7 +336,8 @@
 							frostVars(frost, layerStyles(inst, "frost"), w, h, tintValue);
 						}
 					} else if (el.hasAttribute("data-composer-card") || el.matches("[role='tooltip'][style*='--turn-preview-center']")) {
-						// ★ 输入框：黄金标准，结构一层不动（bf 直接挂元素本身、单层采样）。
+						// The same recipe moves to a separate paint layer while the trigger menu is open.
+						if (isComposer) writeStyle(inst.styles, el, "--mc-composer-filter", value);
 						try { el.setAttribute("data-mc-glass", ""); } catch { /* 忽略 */ }
 						writeStyle(inst.styles, el, "backdrop-filter", value);
 						writeStyle(inst.styles, el, "-webkit-backdrop-filter", value);
@@ -367,8 +360,6 @@
 						} catch { /* 忽略 */ }
 						const rim = ensureLayer(el, inst, "rimLayer", "data-mc-glass-rim", null, radius);
 						const rimSt = layerStyles(inst, "rimLayer");
-						if (usePhysicalGlass) writeStyle(rimSt, rim, "box-shadow", RIM_LIGHT, "important");
-						else restoreStyle(rimSt, rim, "box-shadow");
 						writeStyle(rimSt, rim, "backdrop-filter", value, "important");
 						writeStyle(rimSt, rim, "-webkit-backdrop-filter", value, "important");
 						const frost = ensureLayer(el, inst, "frost", "data-mc-frost", rim, radius);

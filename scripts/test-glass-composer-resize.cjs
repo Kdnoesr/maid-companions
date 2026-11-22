@@ -35,6 +35,7 @@ test('composer keeps its own glass when a long draft crosses the panel area thre
   try {
     assert.equal(liquid.install(), true);
     const filter = card.style.backdropFilter;
+    assert.equal(card.style.getPropertyValue("--mc-composer-filter"), filter);
     assert.match(filter, /url\(#test-.*blur\(1px\) saturate\(1\) brightness\(1.05\)/);
     for (const height of [289, 425, 100]) {
       card.offsetHeight = height;
@@ -46,4 +47,5 @@ test('composer keeps its own glass when a long draft crosses the panel area thre
   } finally {
     liquid.uninstall();
   }
+  assert.equal(card.style.getPropertyValue("--mc-composer-filter"), "");
 });

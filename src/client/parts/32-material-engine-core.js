@@ -104,22 +104,6 @@
 			 *  这与当年 installRing 里"每根条子各配一套 filter"是同一个教训的
 			 *  两个不同层面：那次解决的是 feImage 的坐标系对齐，这次是 SDF 的
 			 *  参考盒子 —— 两个都不能错。 */
-			// Orthographic ray traced backwards, from air through a rounded entry to a flat exit.
-			// Depth and optical path lengths use the bezel width as their reference unit.
-			const traceGlass = (depth) => {
-				const ior = 1.5;
-				const incidence = (1 - depth) ** 2 * (Math.PI * 58 / 180);
-				const refracted = Math.asin(Math.sin(incidence) / ior);
-				const inside = incidence - refracted;
-				const exit = Math.asin(ior * Math.sin(inside));
-				const ci = Math.cos(incidence), ct = Math.cos(refracted);
-				const rs = (ci - ior * ct) / (ci + ior * ct);
-				const rp = (ior * ci - ct) / (ior * ci + ct);
-				return { shift: 0.75 * Math.tan(inside) + 0.35 * Math.tan(exit), reflectance: (rs * rs + rp * rp) / 2 };
-			};
-			const glassSamples = Array.from({ length: 129 }, (_, i) => traceGlass(i / 128));
-			const peakShift = glassSamples[0].shift;
-			const maxSlope = Math.max(...glassSamples.slice(1).map((value, i) => (glassSamples[i].shift - value.shift) * 128 / peakShift));
 			const mapCache = new Map();
 			const buildMap = (elW, elH, radius, bezel, area, kScale, ease, dTarget) => {
 				const key = JSON.stringify([elW, elH, radius, bezel, area, kScale, ease, dTarget || 0, LIQUID.strength, LIQUID.zoom]);
@@ -149,8 +133,6 @@
 				// kScale：环带专用放大系数（垫层已磨砂，边缘补一点强度才看得出弯折）。
 				// 输入框/菜单不传 → 恒为 1，行为与旧版逐字节一致。
 				const k = LIQUID.strength * (kScale || 1);
-				const optical = ease === "physical";
-				const reflections = optical ? new Uint8Array(w * h) : null;
 				let maxD = 0.0001;
 				for (let y = 0; y < h; y++) {
 					for (let x = 0; x < w; x++) {
@@ -178,19 +160,7 @@
 						//   一圈 4.7× 的凸包（"里面糊了一圈"），quad2 的极大值挪到物理外缘
 						//   u≈7（被 0.5px 高光边盖住）—— 带均值 0.81 / 带最小 0.67，
 						//   对现状 0.67 / 0.28。这就是"折射区与内部不再割裂"的数值依据。
-						let reflectance = 0;
-						if (optical) {
-							const index = clamp(-sd / sBezel, 0, 1) * 128;
-							const lo = Math.min(127, Math.floor(index)), mix = index - lo;
-							const a = glassSamples[lo], b = glassSamples[lo + 1];
-							m = (a.shift + (b.shift - a.shift) * mix) / peakShift;
-							reflectance = a.reflectance + (b.reflectance - a.reflectance) * mix - 0.04;
-						} else if (ease === "convex-rim") {
-							// Convex shoulder with zero slope at the clear center and a bounded edge slope.
-							const depth = clamp(-sd / sBezel, 0, 1);
-							const edge = 1 - depth;
-							m = edge * edge * (1 + 0.5 * depth);
-						} else if (ease === "quad2") {
+						if (ease === "quad2") {
 							const t = Math.min(1, Math.max(0, -sd / sBezel));
 							m = (1 - t) * (1 - t);
 						} else if (ease === "global") {
@@ -230,11 +200,6 @@
 						const dy = ny * amp - py * LIQUID.zoom;
 						const i = (y * w + x) * 2;
 						raw[i] = dx; raw[i + 1] = dy;
-						if (reflections) {
-							// Fixed broad light from top left, with softer fill on the opposite edge.
-							const towardLight = clamp(nx * 0.6 + ny * 0.8, -1, 1);
-							reflections[i / 2] = Math.round(255 * clamp(2.6 * reflectance * (0.24 + 0.76 * Math.max(0, towardLight)), 0, 1));
-						}
 						const ad = Math.max(Math.abs(dx), Math.abs(dy));
 						if (ad > maxD) maxD = ad;
 					}
@@ -260,17 +225,12 @@
 				//   144×110 菜单只有 5.0）—— 这就是"像贴了层透明膜、没有透镜渐变"的根因。
 				//   满量程编码：enc=2·maxD ⇒ raw/enc ∈ [−0.5,0.5]，C 刚好占满 0..255 不饱和；
 				//   解码 scale=2·dTarget ⇒ d_peak = scale×0.5 = dTarget，任何尺寸恒等。
-				// Use the continuous peak for the convex rim to keep subpixel sampling
-				// and resizing from amplifying the profile at small dimensions.
-				const peak = optical || ease === "convex-rim" ? k * sBezel : maxD;
-				const enc = dTarget ? 2 * peak : maxD / dispScale;
-				// Keep sampling locally ordered even at the steepest part of the profile.
-				const target = optical ? Math.min(dTarget, 0.88 * bezel / maxSlope) : dTarget;
-				const scale = target ? 2 * target : enc * 2, data = img.data;
+				const enc = dTarget ? 2 * maxD : maxD / dispScale;
+				const scale = dTarget ? 2 * dTarget : enc * 2, data = img.data;
 				for (let i = 0, p = 0; i < raw.length; i += 2, p += 4) {
 					data[p] = clamp(raw[i] / enc + 0.5, 0, 1) * 255;       // R → X
 					data[p + 1] = clamp(raw[i + 1] / enc + 0.5, 0, 1) * 255; // G → Y
-					data[p + 2] = reflections ? reflections[i / 2] : 128; data[p + 3] = 255;
+					data[p + 2] = 128; data[p + 3] = 255;
 				}
 				ctx2d.putImageData(img, 0, 0);
 				const result = { url: cv.toDataURL(), scale };
@@ -642,23 +602,6 @@
 				}
 				inst.cards.clear();
 			};
-			// The upper edge catches the key light, the lower edge catches a softer fill.
-			// Dark sidewalls deepen the profile without drawing a white outline.
-			const RIM_LIGHT = "inset 0 1px 1.25px -0.35px rgb(255 255 255 / 0.37), inset 0 -0.85px 1px -0.35px rgb(255 255 255 / 0.20), inset 1.35px 0 1.3px -0.55px rgb(0 0 0 / 0.24), inset -1.35px 0 1.3px -0.55px rgb(0 0 0 / 0.24)";
-			const appendReflection = (filter, displacement) => {
-				displacement.setAttribute("result", "transmitted");
-				const light = document.createElementNS(SVGNS, "feColorMatrix");
-				light.setAttribute("in", "map");
-				light.setAttribute("type", "matrix");
-				light.setAttribute("values", "0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 1 0 0");
-				light.setAttribute("result", "reflectedLight");
-				const composite = document.createElementNS(SVGNS, "feComposite");
-				composite.setAttribute("in", "reflectedLight");
-				composite.setAttribute("in2", "transmitted");
-				composite.setAttribute("operator", "atop");
-				filter.append(light, composite);
-				return [light, composite];
-			};
 			const installRim = (el, inst, w, h) => {
 				try {
 					const cs = getComputedStyle(el);
@@ -700,7 +643,7 @@
 				// 小面板会被拉到 16 以内，避免"整块内容被拽动"）
 				// v0.11.0：补上 0.4545·bezel 钳制（原来只有 applyTo 里有，veil 没钳制）。
 				// 斜率 |d'|max = 1.98·D/B，D>0.505B 就折返 ⇒ 窄带必须同步降峰值。
-					const map = buildMap(W, H, radius, GP.bezelPx, null, 1, "physical", Math.min(MAT.dispTarget, 0.4545 * GP.bezelPx));
+				const map = buildMap(W, H, radius, GP.bezelPx, null, 1, null, Math.min(MAT.dispTarget, 0.4545 * GP.bezelPx));
 					if (!map) throw new Error("Glass veil map unavailable");
 					if (!inst.veilFilter) {
 						const vf = document.createElementNS(SVGNS, "filter");
@@ -716,7 +659,6 @@
 						dm.setAttribute("xChannelSelector", "R");
 						dm.setAttribute("yChannelSelector", "G");
 						vf.append(fi, dm);
-						appendReflection(vf, dm);
 						inst.svg.appendChild(vf);
 						inst.veilFilter = vf; inst.veilFeImage = fi; inst.veilDisp = dm;
 					}
@@ -724,7 +666,7 @@
 					veil.style.cssText =
 						"position:absolute;pointer-events:none;z-index:0;box-sizing:border-box;" +
 						"left:" + ox2 + "px;top:" + oy2 + "px;" +
-						"width:" + W + "px;height:" + H + "px;border-radius:" + radius + "px;background:transparent;box-shadow:" + RIM_LIGHT + ";" +
+						"width:" + W + "px;height:" + H + "px;border-radius:" + radius + "px;background:transparent;" +
 						"-webkit-backdrop-filter:" + vb + ";backdrop-filter:" + vb + ";";
 					// v0.12.0：veil 只负责"清边"（bf 现在与输入框同参 blur 1 + 位移），
 					// 雾面与体色交给它的 ::after 羽化磨砂芯。参数按盒子尺寸递过去，
@@ -913,6 +855,7 @@
 				try {
 					clearMaterial(inst);
 					restoreBefore(inst);
+					restoreStyle(inst.styles, el, "--mc-composer-filter");
 					restoreStyle(inst.styles, el, "backdrop-filter");
 					restoreStyle(inst.styles, el, "-webkit-backdrop-filter");
 					restoreStyle(inst.styles, el, "background-color");
