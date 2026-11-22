@@ -80,6 +80,21 @@ body[${GLASS_ATTR}] [data-composer-card] {
 		inset 0 0 20px -5px rgba(212, 232, 255, 0.20);
 }
 
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+	body[${GLASS_ATTR}] [data-composer-card] {
+		background: var(--dsw-specific-input-major, var(--dsw-alias-bg-base, Canvas));
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	body[${GLASS_ATTR}][data-dsh-maid-companion-motion] [data-composer-card] {
+		animation: none;
+		will-change: auto;
+	}
+	body[${OWNER_ATTR}] [data-dsh-maid-companion-character] {
+		transition: none !important;
+	}
+}
+
 /* The host renders its trigger menu inside the composer. Give the composer and
    menu separate backdrop layers while the menu is present. */
 body[${GLASS_ATTR}] [data-composer-card]:has([data-composer-overlay] [data-trigger-menu]) {

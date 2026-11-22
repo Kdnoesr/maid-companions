@@ -94,9 +94,10 @@
 			window.addEventListener("resize", resizeHandler);
 			if (!hasAcceleratedWebGL()) body.setAttribute("data-dsh-maid-companion-low-power", "");
 
+			const reducedTransparency = window.matchMedia?.("(prefers-reduced-transparency: reduce)");
 			const syncFeatures = () => {
 				const portraits = enabledPref && portraitStore.getSnapshot();
-				const glass = enabledPref && glassStore.getSnapshot();
+				const glass = enabledPref && glassStore.getSnapshot() && !reducedTransparency?.matches;
 				if (portraits) {
 					syncVisibility();
 					setChatActive();
@@ -122,6 +123,7 @@
 				}
 			};
 			const featureSubscriptions = [enabledStore, portraitStore, glassStore].map(store => store.subscribe(syncFeatures));
+			reducedTransparency?.addEventListener?.("change", syncFeatures);
 			syncFeatures();
 
 			// ── 通用设置开关（React，样式与其它开关一致）──────────────────
@@ -139,6 +141,7 @@
 				if (resizeHandler) window.removeEventListener("resize", resizeHandler);
 				if (resizeTimer) clearTimeout(resizeTimer);
 				if (motionTimer) clearTimeout(motionTimer);
+				reducedTransparency?.removeEventListener?.("change", syncFeatures);
 				for (const unsubscribe of featureSubscriptions) unsubscribe();
 				body.removeAttribute(GLASS_ATTR);
 				stage.remove();

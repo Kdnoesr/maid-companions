@@ -41,6 +41,11 @@ body[${GLASS_ATTR}] [role='tooltip'][style*='--turn-preview-center']:not([data-m
  -webkit-backdrop-filter: blur(1px) saturate(1) brightness(1.05);
  backdrop-filter: blur(1px) saturate(1) brightness(1.05);
 }
+body[${GLASS_ATTR}] div:has(> [data-changes-hover-preview="true"]):not([data-mc-glass]) {
+	background-color: color-mix(in srgb, var(--dsw-alias-bg-layer-1, Canvas) 82%, transparent);
+	-webkit-backdrop-filter: blur(1px) saturate(1) brightness(1.05);
+	backdrop-filter: blur(1px) saturate(1) brightness(1.05);
+}
 /* Quote preview owns the direct parent surface; its text and bridge stay untouched. */
 body[${GLASS_ATTR}] div:has(> [data-quote-popover]):not([data-menu-material='translucent'] *) {
 	background-color: color-mix(in srgb, var(--dsw-specific-menu, #353638) 40%, transparent);
@@ -261,6 +266,7 @@ body[${GLASS_ATTR}] :is(
 	[data-document-zoom-controls],
 	[data-team-panel='true'],
 	[data-mc-portal],
+	div:has(> [data-changes-hover-preview="true"]),
 	div:has(> [data-quote-popover])
 ):not(:is(
 	[data-menu-material],
@@ -360,7 +366,7 @@ body[${GLASS_ATTR}] :is([data-menu-material], [role='group']) > [role='menu'] > 
 }
 /* 菜单背板：宿主 64% 太实（折射被底色吃掉）→ 与其它浮层同一低底色。
    ⚠️ 只改 material 背板层，不动 root 与菜单项，宿主 hover/active 语义不变。 */
-body[${GLASS_ATTR}] [data-menu-material] > div:first-child {
+body[${GLASS_ATTR}] [data-menu-material] > [data-mc-glass]:first-child {
 	/* v0.12.0：体色不再画在元素底上（那是 1px 硬阶跃的来源），改由 ::after 磨砂芯
 	   带羽化 mask 输出；元素底保持透明，折射带才能像输入框一样"清"。 */
 	background-color: transparent !important;

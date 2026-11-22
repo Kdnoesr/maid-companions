@@ -54,6 +54,7 @@
 				if (el.hasAttribute("data-document-zoom-controls")) return "float";
 				if (el.hasAttribute("data-dsh-bottom-panel")) return "float";
 				if (el.hasAttribute("data-mc-portal")) return "float";
+				if (el.matches?.("div:has(> [data-changes-hover-preview='true'])")) return "float";
 				// 宿主新版菜单：material 背板是第一个 aria-hidden 子层（老逻辑已覆盖），
 				// 这里再兜住"父级才是 menu"的列表类浮层。
 				const p = el.parentElement;

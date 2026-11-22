@@ -153,6 +153,7 @@
 			"[data-trigger-menu][data-menu-material='translucent']",
 			"[data-document-zoom-controls]",
 			"div:has(> [data-quote-popover])",
+			"div:has(> [data-changes-hover-preview='true'])",
 			// ❌ 不再直接收 [role='dialog'] / [role='alertdialog']：
 			//    它们既包含小弹窗也包含设置窗这种全尺寸页面，必须靠尺寸闸门区分。
 			//    这里保留选择器、由 collectTargets() 的尺寸判定做过滤。
