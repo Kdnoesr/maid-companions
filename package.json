@@ -1,6 +1,6 @@
 {
   "name": "@kdnoesr/maid-companions",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "左右鲸鱼娘女仆立绘 + 液态玻璃（v0.5.0 统一材质：输入框为基准，浮层/面板/控件共用一套折射与模糊语言）",
   "type": "module",
   "main": "./lib/index.js",
