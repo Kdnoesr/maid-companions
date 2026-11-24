@@ -18,7 +18,28 @@ Open Plugins → Add Plugin in the DSH sidebar and paste the package name below.
 dsh plugin --profile desktop add '@kdnoesr/maid-companions'
 ```
 
-To try the independent switches, paste `github:Kdnoesr/maid-companions#main` into the same field. The npm release, `0.6.0`, has a single master switch.
+GitHub main and npm 0.7.0 both include the two independent switches. If the npm mirror is unreliable on your machine, paste the Git spec below into the same field:
+
+```text
+github:Kdnoesr/maid-companions#main
+```
+
+### Upgrading from 0.6.0 or earlier
+
+0.6.0 shows a single master switch. Installing over it can silently fall back to the old version: when the mirror times out or resolution fails, the new files are never installed while the old ones stay in the profile, so it looks like the upgrade happened. Remove the plugin first, then install again:
+
+```sh
+dsh plugin --profile desktop remove @kdnoesr/maid-companions
+dsh plugin --profile desktop add github:Kdnoesr/maid-companions#main
+```
+
+If add fails with ETIMEDOUT (npm mirror unreachable), retry against the official registry:
+
+```sh
+dsh plugin --profile desktop add @kdnoesr/maid-companions@0.7.0 --registry=https://registry.npmjs.org
+```
+
+After installing, restart DSH. Settings should show three rows: the master switch plus “显示女仆立绘” and “液态玻璃效果”.
 
 ## Settings
 

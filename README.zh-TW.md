@@ -18,7 +18,28 @@
 dsh plugin --profile desktop add '@kdnoesr/maid-companions'
 ```
 
-GitHub 主分支提供預覽版。在同一個安裝欄位貼上 `github:Kdnoesr/maid-companions#main` 即可試用獨立開關。npm `0.6.0` 仍使用總開關。
+GitHub 主分支與 npm 0.7.0 起都包含兩個獨立開關。若機器連線 npm 鏡像不穩定，也可以在同一個安裝欄位貼上下方的 Git 位址：
+
+```text
+github:Kdnoesr/maid-companions#main
+```
+
+### 從 0.6.0 或更早版本升級
+
+0.6.0 的設定只有一行總開關。直接覆蓋安裝有時會被 pnpm 退回舊版本：鏡像逾時或解析失敗時，新版沒裝上，舊檔案仍留在 profile 裡，看起來就像「已經裝過了」。先移除再安裝即可：
+
+```sh
+dsh plugin --profile desktop remove @kdnoesr/maid-companions
+dsh plugin --profile desktop add github:Kdnoesr/maid-companions#main
+```
+
+若 add 回報 ETIMEDOUT（無法連上 npm 鏡像），改用官方來源重試：
+
+```sh
+dsh plugin --profile desktop add @kdnoesr/maid-companions@0.7.0 --registry=https://registry.npmjs.org
+```
+
+安裝完成後重新啟動 DSH，設定中應出現三行：「左右鲸鱼娘女仆」「显示女仆立绘」「液态玻璃效果」。
 
 ## 設定
 
